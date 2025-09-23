@@ -20,7 +20,7 @@
                     </div>
                     <div class="form-group">
                         <label asp-for="Minutes"></label>
-                        <input asp-for="Minutes" type="number" class="form-control" />
+                        <input asp-for="Minutes" type="number" class="form-control" step="any" />
                         <span asp-validation-for="Minutes" class="text-danger"></span>
                     </div>
                     <button type="submit" class="btn btn-primary">Calculate Cost</button>

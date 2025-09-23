@@ -108,5 +108,104 @@ namespace GPURental.Controllers
         {
             return View();
         }
+
+        // Add these methods INSIDE your existing AccountController.cs
+
+        [Authorize] // Protect this action
+        [HttpGet]
+        public async Task<IActionResult> Manage()
+        {
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null)
+            {
+                return NotFound();
+            }
+
+            var model = new ManageAccountViewModel
+            {
+                Email = user.Email,
+                FullName = user.FullName,
+                Timezone = user.Timezone
+            };
+
+            return View(model);
+        }
+
+        [Authorize]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Manage(ManageAccountViewModel model)
+        {
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null)
+            {
+                return NotFound();
+            }
+
+            // --- Repopulate the email in case of any error ---
+            model.Email = user.Email;
+            // ------------------------------------------------
+
+            // Update profile information first
+            user.FullName = model.FullName;
+            user.Timezone = model.Timezone;
+
+            var result = await _userManager.UpdateAsync(user);
+            if (!result.Succeeded)
+            {
+                foreach (var error in result.Errors)
+                {
+                    ModelState.AddModelError(string.Empty, error.Description);
+                }
+                return View(model); // Return view with profile update errors
+            }
+
+            // Handle Password Change if fields are provided
+            if (!string.IsNullOrEmpty(model.OldPassword) && !string.IsNullOrEmpty(model.NewPassword))
+            {
+                var changePasswordResult = await _userManager.ChangePasswordAsync(user, model.OldPassword, model.NewPassword);
+                if (!changePasswordResult.Succeeded)
+                {
+                    foreach (var error in changePasswordResult.Errors)
+                    {
+                        ModelState.AddModelError(string.Empty, error.Description);
+                    }
+                    return View(model); // Return view with password change errors
+                }
+
+                await _signInManager.RefreshSignInAsync(user);
+            }
+
+            TempData["SuccessMessage"] = "Your profile has been updated.";
+            return RedirectToAction("Manage");
+        }
+
+        // Add this method INSIDE your AccountController.cs
+
+        [Authorize] // User must be logged in
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> BecomeProvider()
+        {
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null)
+            {
+                return NotFound();
+            }
+
+            // Check if the user is already a provider to avoid doing extra work
+            if (!await _userManager.IsInRoleAsync(user, "Provider"))
+            {
+                // Add the user to the "Provider" role
+                await _userManager.AddToRoleAsync(user, "Provider");
+
+                // Re-sign the user in so their new role claim is included in their cookie
+                await _signInManager.RefreshSignInAsync(user);
+
+                TempData["SuccessMessage"] = "Congratulations! You are now a provider and can create listings.";
+            }
+
+            return RedirectToAction("Manage");
+        }
     }
 }
