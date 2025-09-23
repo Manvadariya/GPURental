@@ -1,0 +1,80 @@
+﻿@model ListingDetailViewModel
+@{
+    ViewData["Title"] = Model.Listing.Title;
+}
+
+<h1>@Model.Listing.Title</h1>
+<h4>Provided by: @Model.ProviderName</h4>
+<hr />
+
+<div class="row">
+    <!-- Image Gallery Column -->
+    <div class="col-md-7">
+        @{
+            var primaryImageUrl = !string.IsNullOrEmpty(Model.Listing.ImagePath)
+            ? $"/images/listings/{Model.Listing.ImagePath}"
+            : "/images/placeholder.png";
+        }
+        <img src="@primaryImageUrl" class="img-fluid rounded" alt="Main image">
+    </div>
+
+    <!-- Details & Renting Column -->
+    <div class="col-md-5">
+        <div class="card">
+            <div class="card-body">
+                <h3 class="card-title text-primary">$@((Model.Listing.PricePerHourInCents / 100.0m).ToString("F2")) <span class="h5 text-muted">/ hour</span></h3>
+                <p>This listing is available for on-demand rental.</p>
+                <form asp-controller="Rental" asp-action="Create" method="post">
+                    <input type="hidden" name="listingId" value="@Model.Listing.ListingId" />
+                    <button type="submit" class="btn btn-success btn-lg btn-block">Rent Now</button>
+                </form>
+            </div>
+            <ul class="list-group list-group-flush">
+                <li class="list-group-item"><strong>GPU:</strong> @Model.Listing.GpuModel</li>
+                <li class="list-group-item"><strong>VRAM:</strong> @Model.Listing.VramInGB GB</li>
+                <li class="list-group-item"><strong>System RAM:</strong> @Model.Listing.RamInGB GB</li>
+                <li class="list-group-item"><strong>CPU:</strong> @Model.Listing.CpuModel</li>
+                <li class="list-group-item"><strong>Storage:</strong> @Model.Listing.DiskInGB GB SSD</li>
+                <li class="list-group-item"><strong>OS:</strong> @Model.Listing.OperatingSystem</li>
+                <li class="list-group-item"><strong>Location:</strong> @Model.Listing.Location</li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-5">
+    <div class="col">
+        <h3>Reviews (@Model.Reviews.Count())</h3>
+        <hr />
+        @if (Model.Reviews.Any())
+        {
+            @foreach (var review in Model.Reviews)
+            {
+                <div class="card mb-3">
+                    <div class="card-body">
+                        <h5 class="card-title">
+                            @for (int i = 0; i < review.Rating; i++)
+                            {
+                                <span class="text-warning">&#9733;</span>
+                                // Star character
+                            }
+                            @for (int i = review.Rating; i < 5; i++)
+                            {
+                                <span class="text-muted">&#9734;</span>
+                                // Empty star character
+                            }
+                        </h5>
+                        <p class="card-text">@review.Comment</p>
+                        <footer class="blockquote-footer">
+                            Reviewed by @review.Author.FullName on @review.CreatedAt.ToShortDateString()
+                        </footer>
+                    </div>
+                </div>
+            }
+        }
+        else
+        {
+            <p>This listing has no reviews yet.</p>
+        }
+    </div>
+</div>

@@ -1,0 +1,42 @@
+﻿@model SubmitDisputeViewModel
+@{
+    ViewData["Title"] = "File a Dispute";
+}
+
+<h1>@ViewData["Title"]</h1>
+<h4>For rental of: @ViewData["ListingTitle"]</h4>
+<p class="text-muted">We're sorry you had an issue. Please provide the details below.</p>
+<hr />
+
+<div class="row">
+    <div class="col-md-8">
+        <form asp-action="Create" method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+            <input type="hidden" asp-for="RentalJobId" />
+
+            <div class="form-group">
+                <label asp-for="Reason" class="control-label"></label>
+                <select asp-for="Reason" class="form-control">
+                    <option value="">-- Select a Reason --</option>
+                    <option value="Hardware Not as Described">Hardware Not as Described</option>
+                    <option value="Billing Error">Billing Error</option>
+                    <option value="Instance was Unstable/Crashed">Instance was Unstable/Crashed</option>
+                    <option value="Provider was Unresponsive">Provider was Unresponsive</option>
+                    <option value="Other">Other</option>
+                </select>
+                <span asp-validation-for="Reason" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="Description" class="control-label"></label>
+                <textarea asp-for="Description" class="form-control" rows="7" placeholder="Please describe the issue in detail..."></textarea>
+                <span asp-validation-for="Description" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <button type="submit" class="btn btn-danger">Submit Dispute</button>
+            </div>
+        </form>
+    </div>
+</div>

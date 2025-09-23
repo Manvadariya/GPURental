@@ -5,7 +5,7 @@ namespace GPURental.ViewModels
 {
     public class ListingEditViewModel : ListingCreateViewModel
     {
-        public int ListingId { get; set; }
-        public List<ListingImage> ExistingImages { get; set; }
+        public string ListingId { get; set; }
+        public string ExistingImagePath { get; set; }
     }
 }

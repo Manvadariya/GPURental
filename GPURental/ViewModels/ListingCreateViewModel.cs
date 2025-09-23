@@ -36,7 +36,7 @@ namespace GPURental.ViewModels
         [Display(Name = "Price Per Hour (in Cents)")]
         public int PricePerHourInCents { get; set; }
 
-        // For handling image uploads
-        public List<IFormFile> Images { get; set; }
+        [Display(Name = "Listing Image")]
+        public IFormFile Image { get; set; }
     }
 }

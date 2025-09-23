@@ -5,7 +5,7 @@ namespace GPURental.ViewModels
     public class SubmitDisputeViewModel
     {
         [Required]
-        public int RentalJobId { get; set; }
+        public string RentalJobId { get; set; }
 
         [Required]
         public string Reason { get; set; }

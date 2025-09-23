@@ -16,14 +16,14 @@ namespace GPURental.Models
     public class RentalJob
     {
         [Key]
-        public int RentalJobId { get; set; } // Primary Key
+        public string RentalJobId { get; set; } // Primary Key
 
         [Required]
-        public int ListingId { get; set; } // Foreign Key
+        public string ListingId { get; set; } // Foreign Key
         public GpuListing GpuListing { get; set; }
 
         [Required]
-        public int RenterId { get; set; } // Foreign Key
+        public string RenterId { get; set; } // Foreign Key
         public User Renter { get; set; }
 
         public DateTime? ActualStartAt { get; set; }

@@ -5,10 +5,10 @@ namespace GPURental.ViewModels
     public class SubmitReviewViewModel
     {
         [Required]
-        public int RentalJobId { get; set; }
+        public string RentalJobId { get; set; } // <-- int to string
 
         [Required]
-        public int ListingId { get; set; }
+        public string ListingId { get; set; } // <-- int to string
 
         [Required]
         [Range(1, 5, ErrorMessage = "Rating must be between 1 and 5.")]

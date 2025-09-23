@@ -9,16 +9,17 @@ namespace GPURental.Models
         Published,
         Paused,
         Draft,
-        Disabled
+        Disabled,
+        InUse
     }
 
     public class GpuListing
     {
         [Key]
-        public int ListingId { get; set; } // Primary Key
+        public string ListingId { get; set; } // Primary Key
 
         [Required]
-        public int ProviderId { get; set; } // Foreign Key
+        public string ProviderId { get; set; } // Foreign Key
         public User Provider { get; set; }
 
         [Required]
@@ -36,9 +37,9 @@ namespace GPURental.Models
         public int PricePerHourInCents { get; set; }
         public GpuStatus Status { get; set; }
         public DateTime CreatedAt { get; set; }
+        public string ImagePath { get; set; }
 
         // Navigation Properties
-        public ICollection<ListingImage> ListingImages { get; set; }
         public ICollection<RentalJob> RentalJobs { get; set; }
         public ICollection<ListingTag> ListingTags { get; set; }
     }

@@ -1,0 +1,67 @@
+﻿@model MarketplaceViewModel
+@{
+    ViewData["Title"] = "GPU Marketplace";
+}
+
+<div class="text-center">
+    <h1 class="display-4">Welcome to the Marketplace</h1>
+    <p>Find the perfect GPU for your next project.</p>
+</div>
+
+<!-- --- NEW SEARCH FORM --- -->
+<div class="card bg-light my-4">
+    <div class="card-body">
+        <form asp-action="Index" method="get">
+            <div class="form-row align-items-end">
+                <div class="form-group col-md-5">
+                    <label asp-for="GpuModelSearch">GPU Model</label>
+                    <input asp-for="GpuModelSearch" class="form-control" placeholder="e.g., RTX 3090" />
+                </div>
+                <div class="form-group col-md-5">
+                    <label asp-for="MinVramSearch">Minimum VRAM (GB)</label>
+                    <input asp-for="MinVramSearch" type="number" class="form-control" placeholder="e.g., 12" />
+                </div>
+                <div class="form-group col-md-2">
+                    <button type="submit" class="btn btn-primary btn-block">Search</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+<!-- ----------------------- -->
+
+<div class="row">
+    @if (Model.Listings.Any())
+    {
+        @foreach (var listing in Model.Listings)
+        {
+            <div class="col-md-4 mb-4">
+                <div class="card">
+                    @{
+                        var imageUrl = !string.IsNullOrEmpty(listing.ImagePath)
+                        ? $"/images/listings/{listing.ImagePath}"
+                        : "/images/placeholder.png";
+                    }
+                    <img src="@imageUrl" class="card-img-top" alt="@listing.Title" style="height: 200px; object-fit: cover;">
+                    <div class="card-body">
+                        <h5 class="card-title">@listing.Title</h5>
+                        <p class="card-text">
+                            <strong>GPU:</strong> @listing.GpuModel <br />
+                            <strong>VRAM:</strong> @listing.VramInGB GB
+                        </p>
+                        <p class="card-text font-weight-bold">
+                            $@((listing.PricePerHourInCents / 100.0m).ToString("F2")) / hour
+                        </p>
+                        <a asp-action="Details" asp-controller="Marketplace" asp-route-id="@listing.ListingId" class="btn btn-primary">View Details</a>
+                    </div>
+                </div>
+            </div>
+        }
+    }
+    else
+    {
+        <div class="col-12">
+            <p>No GPUs match your search criteria. Try broadening your search!</p>
+        </div>
+    }
+</div>

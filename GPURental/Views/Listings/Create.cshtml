@@ -1,0 +1,105 @@
+﻿@model ListingCreateViewModel
+@{
+    ViewData["Title"] = "Create a New Listing";
+}
+
+<h1>@ViewData["Title"]</h1>
+<h4>Offer your GPU for others to rent.</h4>
+<hr />
+
+<div class="row">
+    <div class="col-md-8">
+        @* The form tag MUST have enctype to support file uploads *@
+        <form asp-action="Create" method="post" enctype="multipart/form-data">
+
+            <div asp-validation-summary="All" class="text-danger"></div>
+
+            <div class="form-group">
+                <label asp-for="Title"></label>
+                <input asp-for="Title" class="form-control" />
+                <span asp-validation-for="Title" class="text-danger"></span>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group col-md-6">
+                    <label asp-for="GpuModel"></label>
+                    <input asp-for="GpuModel" class="form-control" />
+                    <span asp-validation-for="GpuModel" class="text-danger"></span>
+                </div>
+                <div class="form-group col-md-6">
+                    <label asp-for="CpuModel"></label>
+                    <input asp-for="CpuModel" class="form-control" />
+                    <span asp-validation-for="CpuModel" class="text-danger"></span>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group col-md-4">
+                    <label asp-for="VramInGB"></label>
+                    <input asp-for="VramInGB" type="number" class="form-control" />
+                    <span asp-validation-for="VramInGB" class="text-danger"></span>
+                </div>
+                <div class="form-group col-md-4">
+                    <label asp-for="RamInGB"></label>
+                    <input asp-for="RamInGB" type="number" class="form-control" />
+                    <span asp-validation-for="RamInGB" class="text-danger"></span>
+                </div>
+                <div class="form-group col-md-4">
+                    <label asp-for="DiskInGB"></label>
+                    <input asp-for="DiskInGB" type="number" class="form-control" />
+                    <span asp-validation-for="DiskInGB" class="text-danger"></span>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="OperatingSystem"></label>
+                <input asp-for="OperatingSystem" class="form-control" />
+                <span asp-validation-for="OperatingSystem" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="Location"></label>
+                <input asp-for="Location" class="form-control" />
+                <span asp-validation-for="Location" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="PricePerHourInCents"></label>
+                <input asp-for="PricePerHourInCents" type="number" class="form-control" />
+                <span asp-validation-for="PricePerHourInCents" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="Image"></label>
+                <div class="custom-file">
+                    <input asp-for="Image" class="custom-file-input">
+                    <label class="custom-file-label">Choose image...</label>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <button type="submit" class="btn btn-primary">Create Listing</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+
+    <script>
+        // This script updates the file input label with the selected file name
+        $(document).ready(function () {
+            $('.custom-file-input').on("change", function () {
+                var fileLabel = $(this).next('.custom-file-label');
+                var files = $(this)[0].files;
+                if (files.length > 1) {
+                    fileLabel.html(files.length + ' files selected');
+                }
+                else if (files.length == 1) {
+                    fileLabel.html(files[0].name);
+                }
+            });
+        });
+    </script>
+}

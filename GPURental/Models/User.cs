@@ -1,23 +1,20 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Identity; // <-- ADD THIS
+using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations; // <-- ADD THIS
 
 namespace GPURental.Models
 {
-    public class User
+    // Inherit from IdentityUser
+    public class User : IdentityUser
     {
-        [Key] // <-- ADD THIS
-        public int UserId { get; set; }
-        //... rest of the code is the same
-        [Required]
+        // IdentityUser provides: Id (string), UserName, Email, PasswordHash, etc.
+        // We just need to add our custom properties.
         public string FullName { get; set; }
-        [Required]
-        public string Email { get; set; }
-        [Required]
-        public string PasswordHash { get; set; }
         public int BalanceInCents { get; set; }
         public string Timezone { get; set; }
         public DateTime CreatedAt { get; set; }
+
+        // Navigation properties remain
         public ICollection<GpuListing> GpuListings { get; set; }
         public ICollection<RentalJob> RentalJobs { get; set; }
         public ICollection<WalletLedgerEntry> WalletLedgerEntries { get; set; }

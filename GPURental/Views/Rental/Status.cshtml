@@ -1,0 +1,52 @@
+﻿@model RentalJob
+@{
+    ViewData["Title"] = "Active Job Status";
+    // Calculate current duration
+    var duration = DateTime.UtcNow - Model.ActualStartAt.Value;
+}
+
+<h1>@ViewData["Title"]</h1>
+<h4>You are currently renting: @Model.GpuListing.Title</h4>
+<hr />
+
+<div class="row">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                Job Details
+            </div>
+            <div class="card-body">
+                <p><strong>Job ID:</strong> @Model.RentalJobId</p>
+                <p><strong>Start Time:</strong> @Model.ActualStartAt.Value.ToShortTimeString() on @Model.ActualStartAt.Value.ToShortDateString()</p>
+                <p><strong>Current Duration:</strong> @duration.Hours hours, @duration.Minutes minutes, @duration.Seconds seconds</p>
+
+                <h4 class="text-success">Status: @Model.Status</h4>
+            </div>
+            <div class="card-footer">
+                @if (Model.Status == JobStatus.Running)
+                {
+                    <form asp-action="Stop" asp-controller="Rental" method="post">
+                        <input type="hidden" name="rentalJobId" value="@Model.RentalJobId" />
+                        <button type="submit" class="btn btn-danger">Stop Job</button>
+                    </form>
+                }
+                else
+                {
+                    <p>This job has been completed.</p>
+                }
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        @* This is a good place for a dummy console or telemetry in the future *@
+        <div class="card">
+            <div class="card-header">
+                Dummy Console
+            </div>
+            <div class="card-body bg-dark text-light" style="height: 200px; overflow-y: scroll;">
+                <p class="text-white-50">> Connecting to instance...</p>
+                <p class="text-white-50">> Connection successful.</p>
+            </div>
+        </div>
+    </div>
+</div>

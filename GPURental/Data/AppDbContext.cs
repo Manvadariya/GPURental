@@ -1,18 +1,19 @@
 ﻿using GPURental.Models;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore; // <-- ADD or CHANGE to this
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Identity;
+
 
 namespace GPURental.Data
 {
-    public class AppDbContext : DbContext
+    public class AppDbContext : IdentityDbContext<User>
     {
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
         {
         }
 
         // DbSets for all entities
-        public DbSet<User> Users { get; set; }
         public DbSet<GpuListing> GpuListings { get; set; }
-        public DbSet<ListingImage> ListingImages { get; set; }
         public DbSet<RentalJob> RentalJobs { get; set; }
         public DbSet<WalletLedgerEntry> WalletLedgerEntries { get; set; }
         public DbSet<Review> Reviews { get; set; }
@@ -47,12 +48,6 @@ namespace GPURental.Data
                 .HasOne(l => l.Provider)
                 .WithMany(u => u.GpuListings)
                 .HasForeignKey(l => l.ProviderId)
-                .OnDelete(DeleteBehavior.Cascade);
-
-            modelBuilder.Entity<ListingImage>()
-                .HasOne(i => i.GpuListing)
-                .WithMany(l => l.ListingImages)
-                .HasForeignKey(i => i.ListingId)
                 .OnDelete(DeleteBehavior.Cascade);
 
             modelBuilder.Entity<RentalJob>()
@@ -119,6 +114,33 @@ namespace GPURental.Data
                 .HasOne(j => j.Invoice)
                 .WithOne(i => i.RentalJob)
                 .HasForeignKey<Invoice>(i => i.RentalJobId);
+
+            // --- ADD THIS BLOCK TO SEED THE ROLES ---
+            const string ADMIN_ROLE_ID = "a18be9c0-aa65-4af8-bd17-00bd9344e575";
+            const string PROVIDER_ROLE_ID = "a18be9c0-aa65-4af8-bd17-00bd9344e576";
+            const string RENTER_ROLE_ID = "a18be9c0-aa65-4af8-bd17-00bd9344e577";
+
+            modelBuilder.Entity<IdentityRole>().HasData(
+                new IdentityRole
+                {
+                    Id = ADMIN_ROLE_ID,
+                    Name = "Admin",
+                    NormalizedName = "ADMIN"
+                },
+                new IdentityRole
+                {
+                    Id = PROVIDER_ROLE_ID,
+                    Name = "Provider",
+                    NormalizedName = "PROVIDER"
+                },
+                new IdentityRole
+                {
+                    Id = RENTER_ROLE_ID,
+                    Name = "Renter",
+                    NormalizedName = "RENTER"
+                }
+            );
+            // ------------------------------------------
         }
     }
 }

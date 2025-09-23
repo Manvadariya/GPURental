@@ -14,14 +14,14 @@ namespace GPURental.Models
     public class Dispute
     {
         [Key]
-        public int DisputeId { get; set; } // Primary Key
+        public string DisputeId { get; set; } // Primary Key
 
         [Required]
-        public int RentalJobId { get; set; } // Foreign Key
+        public string RentalJobId { get; set; } // Foreign Key
         public RentalJob RentalJob { get; set; }
 
         [Required]
-        public int RaisedByUserId { get; set; } // Foreign Key
+        public string RaisedByUserId { get; set; } // Foreign Key
         public User RaisedByUser { get; set; }
 
         public string Reason { get; set; }

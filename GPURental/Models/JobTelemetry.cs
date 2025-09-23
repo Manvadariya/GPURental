@@ -6,10 +6,10 @@ namespace GPURental.Models
     public class JobTelemetry
     {
         [Key]
-        public int TelemetryId { get; set; } // Primary Key
+        public string TelemetryId { get; set; } // Primary Key
 
         [Required]
-        public int RentalJobId { get; set; } // Foreign Key
+        public string RentalJobId { get; set; } // Foreign Key
         public RentalJob RentalJob { get; set; }
 
         public DateTime Timestamp { get; set; }

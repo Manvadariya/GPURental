@@ -5,7 +5,7 @@ namespace GPURental.Models
     public class Tag
     {
         [Key]
-        public int TagId { get; set; } // Primary Key
+        public string TagId { get; set; } // Primary Key
         [Required]
         public string Name { get; set; }
 

@@ -3,12 +3,10 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using GPURental.Data; // <-- ADD THIS using STATEMENT
-using Microsoft.EntityFrameworkCore; // <-- ADD THIS using STATEMENT
+using GPURental.Data;
+using Microsoft.EntityFrameworkCore;
+using GPURental.Models; // <-- ADD this to get access to the User class
+using Microsoft.AspNetCore.Identity; // <-- ADD this for Identity
 
 namespace GPURental
 {
@@ -19,21 +17,29 @@ namespace GPURental
             Configuration = configuration;
         }
 
+
         public IConfiguration Configuration { get; }
 
-        // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            // --- ADD THIS BLOCK TO REGISTER THE DBCONTEXT ---
             services.AddDbContext<AppDbContext>(options =>
                 options.UseSqlServer(
                     Configuration.GetConnectionString("DefaultConnection")));
-            // ----------------------------------------------------
+
+            // Use the full AddIdentity to include Role services
+            services.AddIdentity<User, IdentityRole>()
+                .AddEntityFrameworkStores<AppDbContext>()
+                .AddDefaultTokenProviders();
 
             services.AddControllersWithViews();
+
+            // --- ADD THIS LINE ---
+            // This re-adds the services for the Identity UI Razor Pages that
+            // AddDefaultIdentity used to provide automatically.
+            services.AddRazorPages();
+            // ---------------------
         }
 
-        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             if (env.IsDevelopment())
@@ -50,6 +56,11 @@ namespace GPURental
 
             app.UseRouting();
 
+            // --- ADD THIS LINE FOR AUTHENTICATION ---
+            // This middleware is responsible for establishing the user's identity.
+            app.UseAuthentication();
+            // ------------------------------------------
+
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
@@ -57,6 +68,8 @@ namespace GPURental
                 endpoints.MapControllerRoute(
                     name: "default",
                     pattern: "{controller=Home}/{action=Index}/{id?}");
+                // Add this line so the Identity UI pages (like Login, Register) work
+                endpoints.MapRazorPages();
             });
         }
     }
