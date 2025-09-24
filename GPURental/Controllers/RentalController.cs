@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace GPURental.Controllers
 {
-    [Authorize] // Only logged-in users can rent
+    [Authorize(Roles = "Renter")] // Only logged-in users can rent
     public class RentalController : Controller
     {
         private readonly AppDbContext _context;

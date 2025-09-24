@@ -8,6 +8,9 @@ namespace GPURental.ViewModels
         [Display(Name = "Full Name")]
         public string FullName { get; set; }
 
+        [Display(Name = "Time Zone")]
+        public string Timezone { get; set; }
+
         [Required]
         [EmailAddress]
         public string Email { get; set; }
@@ -21,12 +24,8 @@ namespace GPURental.ViewModels
         [Compare("Password", ErrorMessage = "The password and confirmation password do not match.")]
         public string ConfirmPassword { get; set; }
 
-        // --- ADD THIS PROPERTY ---
-        [Display(Name = "Time Zone")]
-        public string Timezone { get; set; }
-        // -------------------------
-
-        [Display(Name = "Register as a Provider?")]
-        public bool IsProvider { get; set; }
+        [Required]
+        [Display(Name = "Register As")]
+        public string UserRole { get; set; } // <-- CHANGED from IsProvider
     }
 }

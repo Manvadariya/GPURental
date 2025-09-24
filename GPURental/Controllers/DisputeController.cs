@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace GPURental.Controllers
 {
-    [Authorize] // Only logged-in users can file disputes
+    [Authorize(Roles = "Renter")] // Only logged-in users can file disputes
     public class DisputeController : Controller
     {
         private readonly AppDbContext _context;

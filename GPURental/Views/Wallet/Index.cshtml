@@ -1,53 +1,101 @@
-﻿@model PricingCalculatorViewModel
+﻿@model WalletDashboardViewModel
 @{
-    ViewData["Title"] = "Pricing Calculator";
+    ViewData["Title"] = "My Wallet";
 }
 
 <h1>@ViewData["Title"]</h1>
-<p class="text-muted">Estimate the cost of your next GPU rental.</p>
 <hr />
 
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success">@TempData["SuccessMessage"]</div>
+}
+@if (TempData["ErrorMessage"] != null)
+{
+    <div class="alert alert-danger">@TempData["ErrorMessage"]</div>
+}
+
+
 <div class="row">
-    <div class="col-md-6">
+    <!-- Balance & Add Funds -->
+    <div class="col-md-4">
         <div class="card">
+            <div class="card-body text-center">
+                <h5 class="card-title">Current Balance</h5>
+                <h2 class="display-4 text-success">
+                    $@((Model.CurrentBalanceInCents / 100.0m).ToString("F2"))
+                </h2>
+            </div>
+        </div>
+        
+        <div class="card mt-4">
             <div class="card-body">
-                <form asp-action="Index" method="post">
+                <h5 class="card-title">Add Funds</h5>
+                <form asp-action="AddFunds" method="post">
                     <div class="form-group">
-                        <label asp-for="SelectedGpuModel"></label>
-                        <select asp-for="SelectedGpuModel" asp-items="Model.GpuTypes" class="form-control">
-                            <option value="">-- Please select a GPU --</option>
-                        </select>
+                        <label>Amount (in USD)</label>
+                        <input type="number" name="amount" class="form-control" min="1.00" step="0.01" required />
                     </div>
-                    <div class="form-group">
-                        <label asp-for="Minutes"></label>
-                        <input asp-for="Minutes" type="number" class="form-control" />
-                        <span asp-validation-for="Minutes" class="text-danger"></span>
-                    </div>
-                    <button type="submit" class="btn btn-primary">Calculate Cost</button>
+                    <button type="submit" class="btn btn-primary btn-block">Add Funds</button>
+                    <small class="form-text text-muted">This is a demo. No real payment will be processed.</small>
                 </form>
             </div>
         </div>
     </div>
-    <div class="col-md-6">
-        @if (Model.CalculationSuccess)
+
+    <!-- Transaction History -->
+    <div class="col-md-8">
+        <h4>Transaction History</h4>
+        @if (Model.TransactionHistory.Any())
         {
-            <div class="card text-center">
-                <div class="card-header">
-                    Estimated Cost
-                </div>
-                <div class="card-body">
-                    <h2 class="display-4 text-success">
-                        $@Model.EstimatedCost.ToString("F2")
-                    </h2>
-                    <p class="text-muted">
-                        For a <strong>@Model.SelectedGpuModel</strong> rented for <strong>@Model.Minutes minute(s)</strong>.
-                    </p>
-                    <a asp-controller="Marketplace" asp-action="Index" class="btn btn-info">Browse Available Listings</a>
-                </div>
-                <div class="card-footer text-muted">
-                    This is an estimate based on the average price. Actual prices may vary.
-                </div>
-            </div>
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Type</th>
+                        <th>Amount</th>
+                        <th>Status</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var entry in Model.TransactionHistory)
+                    {
+                        <tr>
+                            <td>@entry.CreatedAt.ToShortDateString()</td>
+                            <td>
+                                @if (entry.Type == LedgerEntryType.Payout)
+                                {
+                                    <span>Provider Payout</span>
+                                }
+                                else
+                                {
+                                    @entry.Type
+                                }
+                            </td>
+                            @{
+                                var amountClass = entry.Type == LedgerEntryType.Charge ? "text-danger" : "text-success";
+                            }
+                            <td class="@amountClass">
+                                $@((entry.AmountInCents / 100.0m).ToString("F2"))
+                            </td>
+                            <td>@entry.Status</td>
+                            <td>
+                                @if (entry.Type == LedgerEntryType.Charge && entry.RentalJobId != null)
+                                {
+                                    <a asp-controller="Review" asp-action="Create" asp-route-rentalJobId="@entry.RentalJobId">Leave Review</a>
+                                    <span class="mx-2">|</span>
+                                    <a asp-controller="Dispute" asp-action="Create" asp-route-rentalJobId="@entry.RentalJobId" class="text-danger">Report Issue</a>
+                                }
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
+        else
+        {
+            <p>You have no transaction history yet.</p>
         }
     </div>
 </div>

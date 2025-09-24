@@ -15,7 +15,7 @@ using System.Threading.Tasks;
 
 namespace GPURental.Controllers
 {
-    [Authorize(Roles = "Provider, Admin")]
+    [Authorize(Roles = "Provider")]
     public class ListingsController : Controller
     {
         private readonly AppDbContext _context;

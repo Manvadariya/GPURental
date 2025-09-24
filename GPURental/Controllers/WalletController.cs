@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace GPURental.Controllers
 {
-    [Authorize] // All actions in this controller require a user to be logged in
+    [Authorize(Roles = "Renter, Provider")]  // All actions in this controller require a user to be logged in
     public class WalletController : Controller
     {
         private readonly AppDbContext _context;

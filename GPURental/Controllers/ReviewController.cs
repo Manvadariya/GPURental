@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace GPURental.Controllers
 {
-    [Authorize] // Only logged-in users can leave reviews
+    [Authorize(Roles = "Renter")] // Only logged-in users can leave reviews
     public class ReviewController : Controller
     {
         private readonly AppDbContext _context;

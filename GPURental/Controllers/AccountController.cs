@@ -29,7 +29,7 @@ namespace GPURental.Controllers
         }
 
         [HttpPost]
-        [ValidateAntiForgeryToken] // Recommended for all POST actions
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Register(RegisterViewModel model)
         {
             if (ModelState.IsValid)
@@ -41,23 +41,23 @@ namespace GPURental.Controllers
                     FullName = model.FullName,
                     CreatedAt = DateTime.UtcNow,
                     BalanceInCents = 0,
-                    Timezone = model.Timezone
+                    Timezone = model.Timezone // <-- ADD THIS LINE BACK
                 };
 
                 var result = await _userManager.CreateAsync(user, model.Password);
 
                 if (result.Succeeded)
                 {
-                    // --- UPDATED ROLE ASSIGNMENT LOGIC ---
-                    // Always assign the "Renter" role by default.
-                    await _userManager.AddToRoleAsync(user, "Renter");
-
-                    // If the user checked the box, also assign the "Provider" role.
-                    if (model.IsProvider)
+                    if (model.UserRole == "Provider" || model.UserRole == "Renter")
                     {
-                        await _userManager.AddToRoleAsync(user, "Provider");
+                        await _userManager.AddToRoleAsync(user, model.UserRole);
                     }
-                    // ------------------------------------
+                    else
+                    {
+                        await _userManager.AddToRoleAsync(user, "Renter");
+                        ModelState.AddModelError("UserRole", "An invalid role was selected.");
+                        return View(model);
+                    }
 
                     await _signInManager.SignInAsync(user, isPersistent: false);
                     return RedirectToAction("Index", "Home");
