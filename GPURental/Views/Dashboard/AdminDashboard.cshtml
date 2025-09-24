@@ -1,0 +1,105 @@
+﻿@model AdminDashboardViewModel
+@{
+    ViewData["Title"] = "Admin Dashboard";
+}
+
+<h1>@ViewData["Title"]</h1>
+<hr />
+
+<!-- Stats Cards -->
+<div class="row">
+    <div class="col-md-4">
+        <div class="card text-white bg-primary mb-3">
+            <div class="card-header">Total Users</div>
+            <div class="card-body">
+                <h4 class="card-title">@Model.TotalUsers</h4>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card text-white bg-info mb-3">
+            <div class="card-header">Total Listings</div>
+            <div class="card-body">
+                <h4 class="card-title">@Model.TotalListings</h4>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card text-white bg-warning mb-3">
+            <div class="card-header">Pending Disputes</div>
+            <div class="card-body">
+                <h4 class="card-title">@Model.PendingDisputes.Count()</h4>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Pending Disputes Table -->
+<div class="mt-4">
+    <h3>Pending Disputes</h3>
+    @if (Model.PendingDisputes.Any())
+    {
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th>Date Raised</th>
+                    <th>Raised By</th>
+                    <th>Reason</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model.PendingDisputes)
+                {
+                    <tr>
+                        <td>@item.CreatedAt.ToShortDateString()</td>
+                        <td>@item.RaisedByUser.Email</td>
+                        <td>@item.Reason</td>
+                        <td>
+                            <a asp-controller="Admin" asp-action="ResolveDispute" asp-route-id="@item.DisputeId" class="btn btn-sm btn-primary">View & Resolve</a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+    else
+    {
+        <p>There are no pending disputes at this time.</p>
+    }
+
+    <!-- Active Jobs Table -->
+    <div class="mt-4">
+        <h3>Currently Running Jobs</h3>
+        @if (Model.ActiveJobs.Any())
+        {
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>Start Time</th>
+                        <th>Renter</th>
+                        <th>Listing</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.ActiveJobs)
+                    {
+                        <tr>
+                            <td>@item.ActualStartAt</td>
+                            <td>@item.Renter.Email</td>
+                            <td>@item.GpuListing.Title</td>
+                            <td>
+                                <a asp-controller="Rental" asp-action="Status" asp-route-id="@item.RentalJobId" class="btn btn-sm btn-info" target="_blank">View Job</a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
+        else
+        {
+            <p>There are no jobs currently running on the platform.</p>
+        }
+    </div>
+</div>

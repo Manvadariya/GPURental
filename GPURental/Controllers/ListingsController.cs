@@ -79,7 +79,7 @@ namespace GPURental.Controllers
 
                 _context.GpuListings.Add(newListing);
                 await _context.SaveChangesAsync();
-                return RedirectToAction("Index");
+                return RedirectToAction("Index", "Dashboard");
             }
             return View(model);
         }
@@ -168,7 +168,7 @@ namespace GPURental.Controllers
             await _context.SaveChangesAsync();
 
             TempData["SuccessMessage"] = "Listing updated successfully!";
-            return RedirectToAction("Index");
+            return RedirectToAction("Index", "Dashboard");
         }
 
         // POST: /Listings/Publish/some-id
@@ -222,7 +222,7 @@ namespace GPURental.Controllers
             await _context.SaveChangesAsync();
 
             TempData["SuccessMessage"] = "Listing deleted successfully.";
-            return RedirectToAction("Index");
+            return RedirectToAction("Index", "Dashboard");
         }
 
         // Private helper method for file processing
@@ -258,7 +258,7 @@ namespace GPURental.Controllers
             _context.GpuListings.Update(listing);
             await _context.SaveChangesAsync();
 
-            return RedirectToAction("Index");
+            return RedirectToAction("Index", "Dashboard");
         }
     }
 }

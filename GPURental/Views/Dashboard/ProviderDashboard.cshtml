@@ -1,0 +1,88 @@
+﻿@model ProviderDashboardViewModel
+@{
+    ViewData["Title"] = "Provider Dashboard";
+}
+
+<h1>@ViewData["Title"]</h1>
+<hr />
+
+<!-- My Listings Section -->
+<h3>My Listings</h3>
+<p>
+    <a asp-controller="Listings" asp-action="Create" class="btn btn-primary">Create New Listing</a>
+</p>
+@if (Model.MyListings.Any())
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Title</th>
+                <th>GPU Model</th>
+                <th>Price Per Hour</th>
+                <th>Status</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model.MyListings)
+            {
+                <tr>
+                    <td>@Html.DisplayFor(modelItem => item.Title)</td>
+                    <td>@Html.DisplayFor(modelItem => item.GpuModel)</td>
+                    <td>$@((item.PricePerHourInCents / 100.0m).ToString("F2"))</td>
+                    <td><span class="badge badge-pill badge-info">@item.Status</span></td>
+                    <td>
+                        <a asp-controller="Listings" asp-action="Edit" asp-route-id="@item.ListingId" class="btn btn-sm btn-secondary">Edit</a>
+                        @if (item.Status == GpuStatus.Draft || item.Status == GpuStatus.Paused)
+                        {
+                            <form asp-controller="Listings" asp-action="Publish" asp-route-id="@item.ListingId" method="post" class="d-inline">
+                                <button type="submit" class="btn btn-sm btn-success">Publish</button>
+                            </form>
+                        }
+                        @if (item.Status == GpuStatus.Published)
+                        {
+                            <form asp-controller="Listings" asp-action="Pause" asp-route-id="@item.ListingId" method="post" class="d-inline">
+                                <button type="submit" class="btn btn-sm btn-warning">Pause</button>
+                            </form>
+                        }
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+else
+{
+    <p>You have not created any listings yet.</p>
+}
+
+<!-- Disputes Against Me Section -->
+<h3 class="mt-5">Disputes Against My Listings</h3>
+@if (Model.DisputesAgainstMe.Any())
+{
+    <table class="table table-hover">
+        <thead>
+            <tr>
+                <th>Date Raised</th>
+                <th>Raised By</th>
+                <th>Reason</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model.DisputesAgainstMe)
+            {
+                <tr>
+                    <td>@item.CreatedAt.ToShortDateString()</td>
+                    <td>@item.RaisedByUser.Email</td>
+                    <td>@item.Reason</td>
+                    <td><span class="badge badge-pill badge-danger">@item.Status</span></td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+else
+{
+    <p>No disputes have been filed against your listings.</p>
+}

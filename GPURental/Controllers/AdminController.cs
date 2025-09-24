@@ -22,7 +22,7 @@ namespace GPURental.Controllers
         // Action for the main Admin Dashboard (can be built out later)
         public IActionResult Index()
         {
-            return RedirectToAction("Disputes"); // Redirect to the disputes page for now
+            return RedirectToAction("Index", "Dashboard"); // Redirect to the disputes page for now
         }
 
         // GET: /Admin/Disputes
@@ -30,8 +30,9 @@ namespace GPURental.Controllers
         public async Task<IActionResult> Disputes()
         {
             var submittedDisputes = await _context.Disputes
-                .Where(d => d.Status == DisputeStatus.Submitted)
-                .Include(d => d.RaisedByUser) // Include user for display
+                .Where(d => d.Status == Models.DisputeStatus.Submitted)
+                .Include(d => d.RentalJob)
+                .Include(d => d.RaisedByUser) // <-- THIS LINE WAS MISSING
                 .OrderBy(d => d.CreatedAt)
                 .ToListAsync();
 
@@ -85,7 +86,7 @@ namespace GPURental.Controllers
             if (dispute == null || dispute.Status != DisputeStatus.Submitted)
             {
                 TempData["ErrorMessage"] = "This dispute could not be found or has already been resolved.";
-                return RedirectToAction("Disputes");
+                return RedirectToAction("Index", "Dashboard");
             }
 
             // --- 2. Handle Rejection ---
@@ -95,7 +96,7 @@ namespace GPURental.Controllers
                 _context.Disputes.Update(dispute);
                 await _context.SaveChangesAsync();
                 TempData["SuccessMessage"] = "The dispute has been rejected.";
-                return RedirectToAction("Disputes");
+                return RedirectToAction("Index", "Dashboard");
             }
 
             // --- 3. Handle Approval and Refund ---
@@ -161,11 +162,11 @@ namespace GPURental.Controllers
 
                 await _context.SaveChangesAsync();
                 TempData["SuccessMessage"] = "The dispute has been successfully resolved.";
-                return RedirectToAction("Disputes");
+                return RedirectToAction("Index", "Dashboard");
             }
 
             // If resolution type is unknown, return to the disputes list
-            return RedirectToAction("Disputes");
+            return RedirectToAction("Index", "Dashboard");
         }
     }
 }
