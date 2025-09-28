@@ -14,7 +14,7 @@ namespace GPURental.Models
     public class Dispute
     {
         [Key]
-        public string DisputeId { get; set; } // Primary Key
+        public string DisputeId { get; set; }
 
         [Required]
         public string RentalJobId { get; set; } // Foreign Key
