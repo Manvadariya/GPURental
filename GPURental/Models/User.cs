@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Identity; // <-- ADD THIS
+﻿using Microsoft.AspNetCore.Identity;
 using System;
 using System.Collections.Generic;
 
@@ -7,8 +7,7 @@ namespace GPURental.Models
     // Inherit from IdentityUser
     public class User : IdentityUser
     {
-        // IdentityUser provides: Id (string), UserName, Email, PasswordHash, etc.
-        // We just need to add our custom properties.
+        // IdentityUser provides: Id (string), UserName, Email, PasswordHash
         public string FullName { get; set; }
         public int BalanceInCents { get; set; }
         public string Timezone { get; set; }

@@ -41,6 +41,5 @@ namespace GPURental.Models
 
         // Navigation Properties
         public ICollection<RentalJob> RentalJobs { get; set; }
-        public ICollection<ListingTag> ListingTags { get; set; }
     }
 }

@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace GPURental.Controllers
 {
-    [Authorize(Roles = "Renter")] // Only logged-in users can file disputes
+    [Authorize(Roles = "Renter")]
     public class DisputeController : Controller
     {
         private readonly AppDbContext _context;
@@ -33,7 +33,7 @@ namespace GPURental.Controllers
             var userId = _userManager.GetUserId(User);
 
             var job = await _context.RentalJobs
-                .Include(j => j.GpuListing) // We already include the listing data here
+                .Include(j => j.GpuListing)
                 .FirstOrDefaultAsync(j =>
                     j.RentalJobId == rentalJobId &&
                     j.RenterId == userId &&
@@ -57,9 +57,7 @@ namespace GPURental.Controllers
                 RentalJobId = job.RentalJobId
             };
 
-            // --- ADD THIS LINE ---
             ViewData["ListingTitle"] = job.GpuListing.Title;
-            // ---------------------
 
             return View(viewModel);
         }
@@ -72,17 +70,15 @@ namespace GPURental.Controllers
             {
                 var userId = _userManager.GetUserId(User);
 
-                // Security Check: Verify again that the user is authorized to dispute this job.
                 var job = await _context.RentalJobs.FirstOrDefaultAsync(j =>
                     j.RentalJobId == model.RentalJobId &&
                     j.RenterId == userId);
 
                 if (job == null)
                 {
-                    return Forbid(); // User is not authorized
+                    return Forbid();
                 }
 
-                // Create the new Dispute entity
                 var dispute = new Dispute
                 {
                     DisputeId = Guid.NewGuid().ToString(),
@@ -90,7 +86,7 @@ namespace GPURental.Controllers
                     RaisedByUserId = userId,
                     Reason = model.Reason,
                     Description = model.Description,
-                    Status = DisputeStatus.Submitted, // New disputes are always "Submitted"
+                    Status = DisputeStatus.Submitted,
                     CreatedAt = DateTime.UtcNow
                 };
 
@@ -101,8 +97,7 @@ namespace GPURental.Controllers
                 return RedirectToAction("Index", "Wallet");
             }
 
-            // If model state is invalid, re-display the form
-            // We need to reload the ListingTitle for the view
+            // If model state is invalid, re-display the form, reload the ListingTitle for the view
             var jobForTitle = await _context.RentalJobs
                                     .Include(j => j.GpuListing)
                                     .FirstOrDefaultAsync(j => j.RentalJobId == model.RentalJobId);

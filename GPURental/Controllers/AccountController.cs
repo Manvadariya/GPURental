@@ -13,14 +13,11 @@ namespace GPURental.Controllers
         private readonly UserManager<User> _userManager;
         private readonly SignInManager<User> _signInManager;
 
-        // Constructor to inject the Identity services
         public AccountController(UserManager<User> userManager, SignInManager<User> signInManager)
         {
             _userManager = userManager;
             _signInManager = signInManager;
         }
-
-        // Add these methods INSIDE the AccountController class
 
         [HttpGet]
         public IActionResult Register()
@@ -41,7 +38,7 @@ namespace GPURental.Controllers
                     FullName = model.FullName,
                     CreatedAt = DateTime.UtcNow,
                     BalanceInCents = 0,
-                    Timezone = model.Timezone // <-- ADD THIS LINE BACK
+                    Timezone = model.Timezone
                 };
 
                 var result = await _userManager.CreateAsync(user, model.Password);
@@ -71,9 +68,6 @@ namespace GPURental.Controllers
             return View(model);
         }
 
-
-        // Add these methods INSIDE the AccountController class
-
         [HttpGet]
         public IActionResult Login()
         {
@@ -85,7 +79,7 @@ namespace GPURental.Controllers
         {
             if (ModelState.IsValid)
             {
-                var result = await _signInManager.PasswordSignInAsync(model.Email, model.Password, model.RememberMe, lockoutOnFailure: false);
+                var result = await _signInManager.PasswordSignInAsync(model.Email, model.Password, isPersistent: false, lockoutOnFailure: false);
                 if (result.Succeeded)
                 {
                     return RedirectToAction("Index", "Home");
@@ -103,15 +97,13 @@ namespace GPURental.Controllers
         }
 
         [HttpGet]
-        [AllowAnonymous] // Allow anyone (even anonymous users, though unlikely to hit this) to see this page
+        [AllowAnonymous]
         public IActionResult AccessDenied()
         {
             return View();
         }
 
-        // Add these methods INSIDE your existing AccountController.cs
-
-        [Authorize] // Protect this action
+        [Authorize]
         [HttpGet]
         public async Task<IActionResult> Manage()
         {
@@ -142,11 +134,8 @@ namespace GPURental.Controllers
                 return NotFound();
             }
 
-            // --- Repopulate the email in case of any error ---
             model.Email = user.Email;
-            // ------------------------------------------------
 
-            // Update profile information first
             user.FullName = model.FullName;
             user.Timezone = model.Timezone;
 
@@ -157,10 +146,9 @@ namespace GPURental.Controllers
                 {
                     ModelState.AddModelError(string.Empty, error.Description);
                 }
-                return View(model); // Return view with profile update errors
+                return View(model);
             }
 
-            // Handle Password Change if fields are provided
             if (!string.IsNullOrEmpty(model.OldPassword) && !string.IsNullOrEmpty(model.NewPassword))
             {
                 var changePasswordResult = await _userManager.ChangePasswordAsync(user, model.OldPassword, model.NewPassword);
@@ -170,7 +158,7 @@ namespace GPURental.Controllers
                     {
                         ModelState.AddModelError(string.Empty, error.Description);
                     }
-                    return View(model); // Return view with password change errors
+                    return View(model);
                 }
 
                 await _signInManager.RefreshSignInAsync(user);
@@ -180,9 +168,8 @@ namespace GPURental.Controllers
             return RedirectToAction("Manage");
         }
 
-        // Add this method INSIDE your AccountController.cs
 
-        [Authorize] // User must be logged in
+        [Authorize]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> BecomeProvider()
@@ -192,14 +179,10 @@ namespace GPURental.Controllers
             {
                 return NotFound();
             }
-
-            // Check if the user is already a provider to avoid doing extra work
             if (!await _userManager.IsInRoleAsync(user, "Provider"))
             {
-                // Add the user to the "Provider" role
                 await _userManager.AddToRoleAsync(user, "Provider");
 
-                // Re-sign the user in so their new role claim is included in their cookie
                 await _signInManager.RefreshSignInAsync(user);
 
                 TempData["SuccessMessage"] = "Congratulations! You are now a provider and can create listings.";

@@ -1,5 +1,5 @@
 ﻿using GPURental.Models;
-using Microsoft.AspNetCore.Identity.EntityFrameworkCore; // <-- ADD or CHANGE to this
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
 
@@ -18,30 +18,10 @@ namespace GPURental.Data
         public DbSet<WalletLedgerEntry> WalletLedgerEntries { get; set; }
         public DbSet<Review> Reviews { get; set; }
         public DbSet<Dispute> Disputes { get; set; }
-        public DbSet<Tag> Tags { get; set; }
-        public DbSet<ListingTag> ListingTags { get; set; }
-        public DbSet<Invoice> Invoices { get; set; }
-        public DbSet<ListingAvailability> ListingAvailabilities { get; set; }
-        public DbSet<JobTelemetry> JobTelemetries { get; set; }
-        public DbSet<JobLog> JobLogs { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
-
-            // --- MANY-TO-MANY RELATIONSHIP: GpuListing <-> Tag ---
-            modelBuilder.Entity<ListingTag>().HasKey(lt => new { lt.ListingId, lt.TagId });
-
-            modelBuilder.Entity<ListingTag>()
-                .HasOne(lt => lt.GpuListing)
-                .WithMany(l => l.ListingTags)
-                .HasForeignKey(lt => lt.ListingId);
-
-            modelBuilder.Entity<ListingTag>()
-                .HasOne(lt => lt.Tag)
-                .WithMany(t => t.ListingTags)
-                .HasForeignKey(lt => lt.TagId);
-
 
             // --- ONE-TO-MANY RELATIONSHIPS ---
             modelBuilder.Entity<GpuListing>()
@@ -68,20 +48,11 @@ namespace GPURental.Data
                 .HasForeignKey(e => e.UserId)
                 .OnDelete(DeleteBehavior.Cascade);
 
-            // --- NEWLY ADDED ONE-TO-MANY RELATIONSHIPS ---
-
             // GpuListing -> Review
             modelBuilder.Entity<Review>()
                 .HasOne(r => r.GpuListing)
-                .WithMany() // A GpuListing can have many reviews, but we don't need a navigation property on GpuListing for it
+                .WithMany()
                 .HasForeignKey(r => r.ListingId)
-                .OnDelete(DeleteBehavior.Cascade); // If listing is deleted, delete reviews
-
-            // GpuListing -> ListingAvailability
-            modelBuilder.Entity<ListingAvailability>()
-                .HasOne(a => a.GpuListing)
-                .WithMany() // A GpuListing can have many availability blocks
-                .HasForeignKey(a => a.ListingId)
                 .OnDelete(DeleteBehavior.Cascade);
 
             // User -> Review (as Author)
@@ -89,14 +60,14 @@ namespace GPURental.Data
                 .HasOne(r => r.Author)
                 .WithMany(u => u.Reviews)
                 .HasForeignKey(r => r.AuthorId)
-                .OnDelete(DeleteBehavior.Restrict); // Don't delete reviews if user account is deleted
+                .OnDelete(DeleteBehavior.Restrict);
 
             // User -> Dispute (as Raiser)
             modelBuilder.Entity<Dispute>()
                 .HasOne(d => d.RaisedByUser)
                 .WithMany(u => u.Disputes)
                 .HasForeignKey(d => d.RaisedByUserId)
-                .OnDelete(DeleteBehavior.Restrict); // Don't delete disputes if user account is deleted
+                .OnDelete(DeleteBehavior.Restrict);
 
 
             // --- ONE-TO-ONE RELATIONSHIPS ---
@@ -110,12 +81,7 @@ namespace GPURental.Data
                 .WithOne(d => d.RentalJob)
                 .HasForeignKey<Dispute>(d => d.RentalJobId);
 
-            modelBuilder.Entity<RentalJob>()
-                .HasOne(j => j.Invoice)
-                .WithOne(i => i.RentalJob)
-                .HasForeignKey<Invoice>(i => i.RentalJobId);
-
-            // --- ADD THIS BLOCK TO SEED THE ROLES ---
+            // THE ROLES
             const string ADMIN_ROLE_ID = "a18be9c0-aa65-4af8-bd17-00bd9344e575";
             const string PROVIDER_ROLE_ID = "a18be9c0-aa65-4af8-bd17-00bd9344e576";
             const string RENTER_ROLE_ID = "a18be9c0-aa65-4af8-bd17-00bd9344e577";
@@ -140,7 +106,6 @@ namespace GPURental.Data
                     NormalizedName = "RENTER"
                 }
             );
-            // ------------------------------------------
         }
     }
 }

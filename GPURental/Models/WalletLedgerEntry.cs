@@ -5,10 +5,10 @@ namespace GPURental.Models
 {
     public enum LedgerEntryType
     {
-        TopUp,  // When a user adds their own money
-        Charge, // When a renter is charged for a job
-        Refund, // When an admin issues a refund
-        Payout  // When a provider is paid for a completed job
+        TopUp,
+        Charge, 
+        Refund,
+        Payout
     }
 
     public enum LedgerEntryStatus
@@ -26,7 +26,7 @@ namespace GPURental.Models
         public string UserId { get; set; } // Foreign Key
         public User User { get; set; }
 
-        public string? RentalJobId { get; set; } // Optional Foreign Key
+        public string? RentalJobId { get; set; }
         public RentalJob RentalJob { get; set; }
 
         public LedgerEntryType Type { get; set; }

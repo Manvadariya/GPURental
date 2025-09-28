@@ -31,7 +31,7 @@ namespace GPURental.Controllers
             _hostingEnvironment = hostingEnvironment;
         }
 
-        // Action for the Provider Dashboard
+        // Provider Dashboard
         public async Task<IActionResult> Index()
         {
             var currentUserId = _userManager.GetUserId(User);
@@ -92,10 +92,8 @@ namespace GPURental.Controllers
                 return NotFound();
             }
 
-            // Corrected line: removed the invalid .Include()
             var listing = await _context.GpuListings.FirstOrDefaultAsync(l => l.ListingId == id);
 
-            // Security check: ensure the listing belongs to the current user
             var currentUserId = _userManager.GetUserId(User);
             if (listing == null || listing.ProviderId != currentUserId)
             {
@@ -138,7 +136,6 @@ namespace GPURental.Controllers
                 return NotFound();
             }
 
-            // Map all properties from the view model to the database entity
             listing.Title = model.Title;
             listing.GpuModel = model.GpuModel;
             listing.CpuModel = model.CpuModel;
@@ -149,10 +146,8 @@ namespace GPURental.Controllers
             listing.Location = model.Location;
             listing.PricePerHourInCents = model.PricePerHourInCents;
 
-            // If a new image is uploaded, process it and update the path
             if (model.Image != null)
             {
-                // Optionally: delete the old image file if it exists
                 if (!string.IsNullOrEmpty(model.ExistingImagePath))
                 {
                     string oldFilePath = Path.Combine(_hostingEnvironment.WebRootPath, "images", "listings", model.ExistingImagePath);
@@ -225,7 +220,6 @@ namespace GPURental.Controllers
             return RedirectToAction("Index", "Dashboard");
         }
 
-        // Private helper method for file processing
         private async Task<string> ProcessUploadedFile(IFormFile file)
         {
             string uniqueFileName = null;
@@ -233,7 +227,7 @@ namespace GPURental.Controllers
             {
                 string uploadsFolder = Path.Combine(_hostingEnvironment.WebRootPath, "images", "listings");
                 Directory.CreateDirectory(uploadsFolder);
-                uniqueFileName = Guid.NewGuid().ToString() + "_" + Path.GetFileName(file.FileName); // Use Path.GetFileName for security
+                uniqueFileName = Guid.NewGuid().ToString() + "_" + Path.GetFileName(file.FileName);
                 string filePath = Path.Combine(uploadsFolder, uniqueFileName);
                 using (var fileStream = new FileStream(filePath, FileMode.Create))
                 {
@@ -242,8 +236,6 @@ namespace GPURental.Controllers
             }
             return uniqueFileName;
         }
-
-        // Private helper method for status updates
         private async Task<IActionResult> UpdateListingStatus(string id, GpuStatus newStatus)
         {
             var listing = await _context.GpuListings.FindAsync(id);

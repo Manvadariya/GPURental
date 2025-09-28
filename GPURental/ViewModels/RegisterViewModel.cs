@@ -26,6 +26,6 @@ namespace GPURental.ViewModels
 
         [Required]
         [Display(Name = "Register As")]
-        public string UserRole { get; set; } // <-- CHANGED from IsProvider
+        public string UserRole { get; set; }
     }
 }

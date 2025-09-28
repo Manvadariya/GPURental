@@ -1,6 +1,6 @@
 ﻿using GPURental.Data;
 using GPURental.Models;
-using GPURental.ViewModels; // We will create new ViewModels
+using GPURental.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace GPURental.Controllers
 {
-    [Authorize] // All dashboard access requires a user to be logged in
+    [Authorize]
     public class DashboardController : Controller
     {
         private readonly AppDbContext _context;
@@ -28,14 +28,13 @@ namespace GPURental.Controllers
 
             if (User.IsInRole("Admin"))
             {
-                // --- Admin Logic ---
                 var viewModel = new AdminDashboardViewModel
                 {
                     TotalUsers = await _context.Users.CountAsync(),
                     TotalListings = await _context.GpuListings.CountAsync(),
                     PendingDisputes = await _context.Disputes
                         .Where(d => d.Status == DisputeStatus.Submitted)
-                        .Include(d => d.RaisedByUser) // <-- THIS IS THE CRUCIAL FIX
+                        .Include(d => d.RaisedByUser)
                         .ToListAsync(),
                     ActiveJobs = await _context.RentalJobs
                         .Where(j => j.Status == JobStatus.Running)
@@ -48,7 +47,6 @@ namespace GPURental.Controllers
             }
             else if (User.IsInRole("Provider"))
             {
-                // --- Provider Logic ---
                 var viewModel = new ProviderDashboardViewModel
                 {
                     MyListings = await _context.GpuListings
@@ -63,9 +61,8 @@ namespace GPURental.Controllers
                 };
                 return View("ProviderDashboard", viewModel);
             }
-            else // Default to Renter
+            else
             {
-                // --- Renter Logic ---
                 var viewModel = new RenterDashboardViewModel
                 {
                     ActiveJobs = await _context.RentalJobs
@@ -76,7 +73,6 @@ namespace GPURental.Controllers
                         .Where(j => j.RenterId == userId && j.Status != JobStatus.Running)
                         .Include(j => j.GpuListing)
                         .OrderByDescending(j => j.ActualEndAt)
-                        .Take(5) // Show the last 5 completed/failed jobs
                         .ToListAsync(),
                     MyReviews = await _context.Reviews
                         .Where(r => r.AuthorId == userId)
@@ -89,7 +85,6 @@ namespace GPURental.Controllers
                     TransactionHistory = await _context.WalletLedgerEntries
                         .Where(e => e.UserId == userId)
                         .OrderByDescending(e => e.CreatedAt)
-                        .Take(10) // Show the last 10 transactions
                         .ToListAsync()
                 };
                 return View("RenterDashboard", viewModel);

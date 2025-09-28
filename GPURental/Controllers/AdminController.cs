@@ -19,28 +19,25 @@ namespace GPURental.Controllers
             _context = context;
         }
 
-        // Action for the main Admin Dashboard (can be built out later)
         public IActionResult Index()
         {
-            return RedirectToAction("Index", "Dashboard"); // Redirect to the disputes page for now
+            return RedirectToAction("Index", "Dashboard");
         }
 
-        // GET: /Admin/Disputes
-        // Displays a list of all pending disputes
+        // GET: /Admin/Disputes => Displays a list of all pending disputes
         public async Task<IActionResult> Disputes()
         {
             var submittedDisputes = await _context.Disputes
                 .Where(d => d.Status == Models.DisputeStatus.Submitted)
                 .Include(d => d.RentalJob)
-                .Include(d => d.RaisedByUser) // <-- THIS LINE WAS MISSING
+                .Include(d => d.RaisedByUser)
                 .OrderBy(d => d.CreatedAt)
                 .ToListAsync();
 
             return View(submittedDisputes);
         }
 
-        // GET: /Admin/ResolveDispute/some-id
-        // Displays the details of a single dispute
+        // GET: /Admin/ResolveDispute/some-id => Displays the details of a single dispute
         [HttpGet]
         public async Task<IActionResult> ResolveDispute(string id)
         {
@@ -64,8 +61,7 @@ namespace GPURental.Controllers
             return View(dispute);
         }
 
-        // POST: /Admin/ResolveDispute
-        // Processes the admin's resolution decision
+        // POST: /Admin/ResolveDispute => Processes the admin's resolution decision
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> ResolveDispute(string disputeId, string resolution, decimal refundAmount)
@@ -75,7 +71,6 @@ namespace GPURental.Controllers
                 return BadRequest();
             }
 
-            // --- 1. Fetch all necessary data in one query ---
             var dispute = await _context.Disputes
                 .Include(d => d.RaisedByUser) // Renter
                 .Include(d => d.RentalJob)
@@ -89,7 +84,6 @@ namespace GPURental.Controllers
                 return RedirectToAction("Index", "Dashboard");
             }
 
-            // --- 2. Handle Rejection ---
             if (resolution == "reject")
             {
                 dispute.Status = DisputeStatus.Rejected;
@@ -99,14 +93,11 @@ namespace GPURental.Controllers
                 return RedirectToAction("Index", "Dashboard");
             }
 
-            // --- 3. Handle Approval and Refund ---
             if (resolution == "approve")
             {
-                // Convert the incoming dollar amount from the form to cents for database operations
                 int refundAmountCents = (int)(refundAmount * 100);
                 int originalCharge = dispute.RentalJob.FinalChargeInCents ?? 0;
 
-                // Validation checks
                 if (refundAmountCents < 0)
                 {
                     TempData["ErrorMessage"] = "Refund amount cannot be negative.";
@@ -118,7 +109,6 @@ namespace GPURental.Controllers
                     return RedirectToAction("ResolveDispute", new { id = disputeId });
                 }
 
-                // If a refund is being processed, handle the financial transaction
                 if (refundAmountCents > 0)
                 {
                     var renter = dispute.RaisedByUser;
@@ -129,11 +119,9 @@ namespace GPURental.Controllers
                         TempData["WarningMessage"] = "Warning: Provider's balance is now negative.";
                     }
 
-                    // Adjust balances
                     renter.BalanceInCents += refundAmountCents;
                     provider.BalanceInCents -= refundAmountCents;
 
-                    // Create ledger entry for Renter's refund
                     _context.WalletLedgerEntries.Add(new WalletLedgerEntry
                     {
                         LedgerId = Guid.NewGuid().ToString(),
@@ -144,7 +132,6 @@ namespace GPURental.Controllers
                         CreatedAt = DateTime.UtcNow
                     });
 
-                    // Create ledger entry for Provider's debit
                     _context.WalletLedgerEntries.Add(new WalletLedgerEntry
                     {
                         LedgerId = Guid.NewGuid().ToString(),
@@ -156,7 +143,6 @@ namespace GPURental.Controllers
                     });
                 }
 
-                // Finally, update the dispute status
                 dispute.Status = DisputeStatus.Resolved;
                 _context.Disputes.Update(dispute);
 

@@ -34,7 +34,6 @@ namespace GPURental.Models
         // Navigation Properties
         public Review Review { get; set; }
         public Dispute Dispute { get; set; }
-        public Invoice Invoice { get; set; }
         public ICollection<WalletLedgerEntry> WalletLedgerEntries { get; set; }
     }
 }

@@ -4,10 +4,8 @@ namespace GPURental.ViewModels
 {
     public class ManageAccountViewModel
     {
-        // For displaying the user's email (read-only)
         public string Email { get; set; }
 
-        // For the Profile Information form
         [Required]
         [Display(Name = "Full Name")]
         public string FullName { get; set; }
