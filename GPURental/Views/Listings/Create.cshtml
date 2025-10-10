@@ -23,7 +23,7 @@
             <div class="form-row">
                 <div class="form-group col-md-6">
                     <label asp-for="GpuModel"></label>
-                    <input asp-for="GpuModel" class="form-control" />
+                    <input id="gpuModelInput" asp-for="GpuModel" class="form-control" /> @* <-- ADD id="gpuModelInput" *@
                     <span asp-validation-for="GpuModel" class="text-danger"></span>
                 </div>
                 <div class="form-group col-md-6">
@@ -36,7 +36,7 @@
             <div class="form-row">
                 <div class="form-group col-md-4">
                     <label asp-for="VramInGB"></label>
-                    <input asp-for="VramInGB" type="number" class="form-control" />
+                    <input id="vramInput" asp-for="VramInGB" type="number" class="form-control" /> @* <-- This one should already be correct *@
                     <span asp-validation-for="VramInGB" class="text-danger"></span>
                 </div>
                 <div class="form-group col-md-4">
@@ -65,8 +65,12 @@
 
             <div class="form-group">
                 <label asp-for="PricePerHourInCents"></label>
-                <input asp-for="PricePerHourInCents" type="number" class="form-control" />
-                <span asp-validation-for="PricePerHourInCents" class="text-danger"></span>
+                <div class="input-group">
+                    <input id="priceInput" asp-for="PricePerHourInCents" type="number" class="form-control" />
+                    <div class="input-group-append">
+                        <button id="suggestPriceBtn" type="button" class="btn btn-outline-info">AI Suggest</button>
+                    </div>
+                </div>
             </div>
 
             <div class="form-group">
@@ -86,18 +90,24 @@
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
-
     <script>
-        // This script updates the file input label with the selected file name
         $(document).ready(function () {
-            $('.custom-file-input').on("change", function () {
-                var fileLabel = $(this).next('.custom-file-label');
-                var files = $(this)[0].files;
-                if (files.length > 1) {
-                    fileLabel.html(files.length + ' files selected');
-                }
-                else if (files.length == 1) {
-                    fileLabel.html(files[0].name);
+            $('#suggestPriceBtn').on('click', function () {
+                var gpuModel = $('#gpuModelInput').val(); // Make sure your GpuModel input has id="gpuModelInput"
+                var vram = $('#vramInput').val();
+
+                if (gpuModel && vram) {
+                    fetch(`/Listings/SuggestPrice?gpuModel=${gpuModel}&vram=${vram}`)
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.success) {
+                                $('#priceInput').val(data.price);
+                            } else {
+                                alert("Could not suggest a price. Please fill in GPU Model and VRAM.");
+                            }
+                        });
+                } else {
+                    alert("Please fill in GPU Model and VRAM before suggesting a price.");
                 }
             });
         });

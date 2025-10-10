@@ -1,5 +1,6 @@
 ﻿using GPURental.Data;
 using GPURental.Models;
+using GPURental.Services;
 using GPURental.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
@@ -21,14 +22,17 @@ namespace GPURental.Controllers
         private readonly AppDbContext _context;
         private readonly UserManager<User> _userManager;
         private readonly IWebHostEnvironment _hostingEnvironment;
+        private readonly IAiService _aiService;
 
         public ListingsController(AppDbContext context,
                                   UserManager<User> userManager,
-                                  IWebHostEnvironment hostingEnvironment)
+                                  IWebHostEnvironment hostingEnvironment,
+                                  IAiService aiService)
         {
             _context = context;
             _userManager = userManager;
             _hostingEnvironment = hostingEnvironment;
+            _aiService = aiService;
         }
 
         // Provider Dashboard
@@ -251,6 +255,24 @@ namespace GPURental.Controllers
             await _context.SaveChangesAsync();
 
             return RedirectToAction("Index", "Dashboard");
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> SuggestPrice(string gpuModel, int vram)
+        {
+            if (string.IsNullOrEmpty(gpuModel) || vram <= 0)
+            {
+                return Json(new { success = false });
+            }
+
+            var existingListings = await _context.GpuListings
+                .Where(l => l.Status == GpuStatus.Published)
+                .Take(10) // Get a sample of market prices
+                .ToListAsync();
+
+            var suggestedPrice = await _aiService.SuggestPriceAsync(gpuModel, vram, existingListings);
+
+            return Json(new { success = true, price = suggestedPrice });
         }
     }
 }

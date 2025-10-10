@@ -1,12 +1,14 @@
+using GPURental.Data;
+using GPURental.Models; // <-- ADD this to get access to the User class
+using GPURental.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Identity; // <-- ADD this for Identity
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using GPURental.Data;
-using Microsoft.EntityFrameworkCore;
-using GPURental.Models; // <-- ADD this to get access to the User class
-using Microsoft.AspNetCore.Identity; // <-- ADD this for Identity
+
 
 namespace GPURental
 {
@@ -38,6 +40,8 @@ namespace GPURental
             // AddDefaultIdentity used to provide automatically.
             services.AddRazorPages();
             // ---------------------
+
+            services.AddScoped<IAiService, GeminiAiService>();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)

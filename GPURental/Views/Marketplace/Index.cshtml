@@ -8,7 +8,23 @@
     <p>Find the perfect GPU for your next project.</p>
 </div>
 
-<!-- --- NEW SEARCH FORM --- -->
+<!-- AI-Powered Search Form -->
+<div class="card bg-light my-4">
+    <div class="card-body">
+        <h5>AI-Powered Search</h5>
+        <p class="text-muted">Describe your task and let AI find the right GPU for you.</p>
+        <form asp-action="AiSearch" asp-controller="Marketplace" method="get">
+            <div class="input-group">
+                <input type="text" name="userTask" class="form-control" placeholder="e.g., Train an 8 billion parameter LLM" required />
+                <div class="input-group-append">
+                    <button type="submit" class="btn btn-info">Find GPU</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Manual Filter Form -->
 <div class="card bg-light my-4">
     <div class="card-body">
         <form asp-action="Index" method="get">
@@ -28,22 +44,24 @@
         </form>
     </div>
 </div>
-<!-- ----------------------- -->
 
+<hr />
+
+<!-- Listing Results -->
 <div class="row">
     @if (Model.Listings.Any())
     {
         @foreach (var listing in Model.Listings)
         {
             <div class="col-md-4 mb-4">
-                <div class="card">
+                <div class="card h-100">
                     @{
                         var imageUrl = !string.IsNullOrEmpty(listing.ImagePath)
                         ? $"/images/listings/{listing.ImagePath}"
                         : "/images/placeholder.png";
                     }
                     <img src="@imageUrl" class="card-img-top" alt="@listing.Title" style="height: 200px; object-fit: cover;">
-                    <div class="card-body">
+                    <div class="card-body d-flex flex-column">
                         <h5 class="card-title">@listing.Title</h5>
                         <p class="card-text">
                             <strong>GPU:</strong> @listing.GpuModel <br />
@@ -52,7 +70,9 @@
                         <p class="card-text font-weight-bold">
                             $@((listing.PricePerHourInCents / 100.0m).ToString("F2")) / hour
                         </p>
-                        <a asp-action="Details" asp-controller="Marketplace" asp-route-id="@listing.ListingId" class="btn btn-primary">View Details</a>
+                        <div class="mt-auto">
+                            <a asp-action="Details" asp-controller="Marketplace" asp-route-id="@listing.ListingId" class="btn btn-primary">View Details</a>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -60,8 +80,10 @@
     }
     else
     {
-        <div class="col-12">
-            <p>No GPUs match your search criteria. Try broadening your search!</p>
+        <div class="col-12 text-center mt-5">
+            <h4>No GPUs Match Your Criteria</h4>
+            <p>Please try a different search. If you used the AI search, it's possible no currently available GPUs meet the requirements for your task.</p>
+            <p>Providers are adding new GPUs all the time, so please check back soon!</p>
         </div>
     }
 </div>
