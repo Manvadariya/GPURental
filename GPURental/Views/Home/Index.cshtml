@@ -1,8 +1,101 @@
 ﻿@{
-    ViewData["Title"] = "Home Page";
+    ViewData["Title"] = "Premium GPU Rental Marketplace";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<!-- Hero Section -->
+<div class="hero-section-fullscreen text-center">
+    <div class="hero-content">
+        <h1 class="display-3 font-weight-bold">
+            Rent <span class="hero-accent-text">Premium GPUs</span><br />
+            at Unbeatable Prices
+        </h1>
+        <p class="lead mt-3">
+            Access high-performance computing power instantly, or monetize your
+            idle GPUs. The future of distributed computing starts here.
+        </p>
+        <div class="mt-4">
+            <a class="btn btn-primary btn-lg mx-2 my-2" asp-controller="Marketplace" asp-action="Index" role="button">
+                Rent a GPU
+            </a>
+            <a class="btn btn-outline-dark btn-lg mx-2 my-2" asp-controller="Account" asp-action="Register" role="button">
+                Become a Provider
+            </a>
+        </div>
+    </div>
+</div>
+
+<!-- How It Works Section -->
+<div id="how-it-works" class="how-it-works-section py-5">
+    <div class="container">
+        <div class="text-center mb-5">
+            <h2 class="display-4 font-weight-bold">How It Works</h2>
+            <p class="lead text-muted">
+              Get started in minutes with our streamlined process.
+            </p>
+        </div>
+
+        <div class="row justify-content-center">
+            <div class="col-lg-5 mb-4">
+                <div class="card h-100 shadow-sm how-it-works-card">
+                    <div class="card-body p-4">
+                        <h3 class="card-title text-center text-info font-weight-bold mb-4">
+                            For GPU Renters
+                        </h3>
+                        <div class="step">
+                            <div class="step-number-renter">1</div>
+                            <div class="step-content">
+                                <h5>Fund Your Wallet</h5>
+                                <p class="text-muted small">Securely add credits to your account to get started.</p>
+                            </div>
+                        </div>
+                        <div class="step">
+                            <div class="step-number-renter">2</div>
+                            <div class="step-content">
+                                <h5>Find & Rent a GPU</h5>
+                                <p class="text-muted small">Use our marketplace and AI search to find the perfect hardware.</p>
+                            </div>
+                        </div>
+                        <div class="step">
+                            <div class="step-number-renter">3</div>
+                            <div class="step-content">
+                                <h5>Start Computing</h5>
+                                <p class="text-muted small">Deploy your workloads instantly and only pay for the time you use.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-5 mb-4">
+                <div class="card h-100 shadow-sm how-it-works-card">
+                    <div class="card-body p-4">
+                        <h3 class="card-title text-center text-primary font-weight-bold mb-4">
+                            For GPU Providers
+                        </h3>
+                        <div class="step">
+                            <div class="step-number-provider">1</div>
+                            <div class="step-content">
+                                <h5>List Your GPU</h5>
+                                <p class="text-muted small">Register your hardware and set your own competitive hourly rates.</p>
+                            </div>
+                        </div>
+                        <div class="step">
+                            <div class="step-number-provider">2</div>
+                            <div class="step-content">
+                                <h5>Get Rented</h5>
+                                <p class="text-muted small">Our platform securely connects your machine to renters around the world.</p>
+                            </div>
+                        </div>
+                        <div class="step">
+                            <div class="step-number-provider">3</div>
+                            <div class="step-content">
+                                <h5>Earn Revenue</h5>
+                                <p class="text-muted small">Get paid for every minute your GPU is rented and watch your earnings grow.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>

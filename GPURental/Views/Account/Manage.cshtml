@@ -1,68 +1,80 @@
 ﻿@model ManageAccountViewModel
 @{
-    ViewData["Title"] = "Manage Your Account";
+    ViewData["Title"] = "Manage Account";
 }
 
-<h1>@ViewData["Title"]</h1>
+<!-- Apply the same background and font as the other form pages -->
+<script>document.body.classList.add('login-page-background');</script>
 
-@if (TempData["SuccessMessage"] != null)
-{
-    <div class="alert alert-success">@TempData["SuccessMessage"]</div>
-}
+<div class="login-container">
+    <div class="login-card shadow-lg" style="max-width: 600px;">
 
-<div class="row">
-    <div class="col-md-8">
-        <form asp-action="Manage" method="post">
-            <h4>Update your account settings.</h4>
-            <hr />
-            <div asp-validation-summary="All" class="text-danger"></div>
+        <div class="text-center">
+            <h1 class="h3 font-weight-bold mb-2">@ViewData["Title"]</h1>
+            <p class="text-muted">Update your profile and password.</p>
+        </div>
 
-            <div class="form-group">
-                <label asp-for="Email"></label>
-                <input asp-for="Email" class="form-control" disabled />
-            </div>
-            <div class="form-group">
-                <label asp-for="FullName"></label>
-                <input asp-for="FullName" class="form-control" />
-                <span asp-validation-for="FullName" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Timezone"></label>
-                <input asp-for="Timezone" class="form-control" />
-            </div>
-
-            <hr />
-            <h4>Change Password</h4>
-            <small class="text-muted">Leave these fields blank to keep your current password.</small>
-
-            <div class="form-group">
-                <label asp-for="OldPassword"></label>
-                <input asp-for="OldPassword" class="form-control" />
-                <span asp-validation-for="OldPassword" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="NewPassword"></label>
-                <input asp-for="NewPassword" class="form-control" />
-                <span asp-validation-for="NewPassword" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="ConfirmPassword"></label>
-                <input asp-for="ConfirmPassword" class="form-control" />
-                <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
-            </div>
-
-            <button type="submit" class="btn btn-primary">Update Account</button>
-        </form>
-        @if (!User.IsInRole("Provider") && !User.IsInRole("Admin"))
+        @if (TempData["SuccessMessage"] != null)
         {
-            <hr />
-            <h4>Provider Settings</h4>
-            <p>
-                Want to rent out your own GPU and earn money? Become a provider!
-            </p>
-            <form asp-action="BecomeProvider" method="post">
-                <button type="submit" class="btn btn-success">Become a Provider</button>
-            </form>
+            <div class="alert alert-success mt-3">@TempData["SuccessMessage"]</div>
+        }
+
+        <form asp-action="Manage" method="post" class="mt-4">
+            <div asp-validation-summary="All" class="text-danger small"></div>
+
+            <h5 class="form-section-header">Profile Information</h5>
+
+            <div class="form-group">
+                <label asp-for="Email" class="login-label"></label>
+                <input asp-for="Email" class="form-control login-input" disabled />
+            </div>
+            <div class="form-group">
+                <label asp-for="FullName" class="login-label"></label>
+                <input asp-for="FullName" class="form-control login-input" />
+                <span asp-validation-for="FullName" class="text-danger small"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Timezone" class="login-label"></label>
+                <input asp-for="Timezone" class="form-control login-input" />
+            </div>
+
+            <hr class="my-4" />
+
+            <h5 class="form-section-header">Change Password</h5>
+            <small class="text-muted d-block mb-3">Leave these fields blank to keep your current password.</small>
+
+            <div class="form-group">
+                <label asp-for="OldPassword" class="login-label"></label>
+                <input asp-for="OldPassword" class="form-control login-input" />
+                <span asp-validation-for="OldPassword" class="text-danger small"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="NewPassword" class="login-label"></label>
+                <input asp-for="NewPassword" class="form-control login-input" />
+                <span asp-validation-for="NewPassword" class="text-danger small"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="ConfirmPassword" class="login-label"></label>
+                <input asp-for="ConfirmPassword" class="form-control login-input" />
+                <span asp-validation-for="ConfirmPassword" class="text-danger small"></span>
+            </div>
+
+            <button type="submit" class="btn btn-primary btn-block glow-accent mt-4">Update Account</button>
+        </form>
+
+        <!-- "Become a Provider" section, now consistent with the new UI -->
+        @if (!User.IsInRole("Provider"))
+        {
+            <hr class="my-4" />
+            <div class="text-center">
+                <h5 class="form-section-header">Provider Settings</h5>
+                <p class="text-muted small mb-3">
+                    Want to rent out your own GPU and earn money? Become a provider!
+                </p>
+                <form asp-action="BecomeProvider" method="post">
+                    <button type="submit" class="btn btn-success">Become a Provider</button>
+                </form>
+            </div>
         }
     </div>
 </div>

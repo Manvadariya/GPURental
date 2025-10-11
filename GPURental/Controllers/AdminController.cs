@@ -72,10 +72,10 @@ namespace GPURental.Controllers
             }
 
             var dispute = await _context.Disputes
-                .Include(d => d.RaisedByUser) // Renter
+                .Include(d => d.RaisedByUser)
                 .Include(d => d.RentalJob)
                     .ThenInclude(j => j.GpuListing)
-                        .ThenInclude(l => l.Provider) // Provider
+                        .ThenInclude(l => l.Provider)
                 .FirstOrDefaultAsync(d => d.DisputeId == disputeId);
 
             if (dispute == null || dispute.Status != DisputeStatus.Submitted)
@@ -95,39 +95,38 @@ namespace GPURental.Controllers
 
             if (resolution == "approve")
             {
-                int refundAmountCents = (int)(refundAmount * 100);
-                int originalCharge = dispute.RentalJob.FinalChargeInCents ?? 0;
+                decimal originalCharge = dispute.RentalJob.FinalChargeInINR ?? 0;
 
-                if (refundAmountCents < 0)
+                if (refundAmount < 0)
                 {
                     TempData["ErrorMessage"] = "Refund amount cannot be negative.";
                     return RedirectToAction("ResolveDispute", new { id = disputeId });
                 }
-                if (refundAmountCents > originalCharge)
+                if (refundAmount > originalCharge)
                 {
-                    TempData["ErrorMessage"] = $"Refund amount cannot exceed the original charge of ${(originalCharge / 100.0m):F2}.";
+                    TempData["ErrorMessage"] = $"Refund amount cannot exceed the original charge of ₹{originalCharge:F2}.";
                     return RedirectToAction("ResolveDispute", new { id = disputeId });
                 }
 
-                if (refundAmountCents > 0)
+                if (refundAmount > 0)
                 {
                     var renter = dispute.RaisedByUser;
                     var provider = dispute.RentalJob.GpuListing.Provider;
 
-                    if (provider.BalanceInCents < refundAmountCents)
+                    if (provider.BalanceInINR < refundAmount)
                     {
                         TempData["WarningMessage"] = "Warning: Provider's balance is now negative.";
                     }
 
-                    renter.BalanceInCents += refundAmountCents;
-                    provider.BalanceInCents -= refundAmountCents;
+                    renter.BalanceInINR += refundAmount;
+                    provider.BalanceInINR -= refundAmount;
 
                     _context.WalletLedgerEntries.Add(new WalletLedgerEntry
                     {
                         LedgerId = Guid.NewGuid().ToString(),
                         UserId = renter.Id,
                         Type = LedgerEntryType.Refund,
-                        AmountInCents = refundAmountCents,
+                        AmountInINR = refundAmount,
                         Status = LedgerEntryStatus.Completed,
                         CreatedAt = DateTime.UtcNow
                     });
@@ -137,7 +136,7 @@ namespace GPURental.Controllers
                         LedgerId = Guid.NewGuid().ToString(),
                         UserId = provider.Id,
                         Type = LedgerEntryType.Charge,
-                        AmountInCents = refundAmountCents,
+                        AmountInINR = refundAmount,
                         Status = LedgerEntryStatus.Completed,
                         CreatedAt = DateTime.UtcNow
                     });
@@ -151,7 +150,6 @@ namespace GPURental.Controllers
                 return RedirectToAction("Index", "Dashboard");
             }
 
-            // If resolution type is unknown, return to the disputes list
             return RedirectToAction("Index", "Dashboard");
         }
     }

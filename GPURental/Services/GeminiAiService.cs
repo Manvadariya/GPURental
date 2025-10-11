@@ -42,7 +42,7 @@ namespace GPURental.Services
             // ------------------------------------
             
             var contextPrices = existingListings.Any()
-                ? string.Join(", ", existingListings.Select(l => $"{l.GpuModel} with {l.VramInGB}GB VRAM is ${l.PricePerHourInCents / 100.0m:F2}"))
+                ? string.Join(", ", existingListings.Select(l => $"{l.GpuModel} with {l.VramInGB}GB VRAM is ${l.PricePerHourInINR / 100.0m:F2}"))
                 : "No other listings are currently available.";
 
             var userPrompt = $"GPU TO PRICE: {gpuModel} with {vram}GB VRAM.\nCURRENT MARKET CONTEXT: {contextPrices}.";

@@ -45,10 +45,10 @@ namespace GPURental.Controllers
                 TempData["ErrorMessage"] = "You cannot rent your own GPU.";
                 return RedirectToAction("Details", "Marketplace", new { id = listingId });
             }
-            if (renter.BalanceInCents < listing.PricePerHourInCents)
+            if (renter.BalanceInINR < listing.PricePerHourInINR)
             {
                 TempData["ErrorMessage"] = "Insufficient funds. You need at least $"
-                    + (listing.PricePerHourInCents / 100.0m).ToString("F2")
+                    + (listing.PricePerHourInINR).ToString("F2")
                     + " to start this rental. Please add funds to your wallet.";
                 return RedirectToAction("Index", "Wallet");
             }
@@ -61,7 +61,7 @@ namespace GPURental.Controllers
                 RenterId = renter.Id,
                 ActualStartAt = DateTime.UtcNow,
                 Status = JobStatus.Running,
-                FinalChargeInCents = null
+                FinalChargeInINR = null
             };
 
             _context.RentalJobs.Add(rentalJob);
@@ -103,6 +103,7 @@ namespace GPURental.Controllers
 
             var renterId = _userManager.GetUserId(User);
 
+            // Find the job, its listing, AND the provider user object all in one query
             var rentalJob = await _context.RentalJobs
                 .Include(j => j.GpuListing)
                     .ThenInclude(l => l.Provider)
@@ -110,64 +111,67 @@ namespace GPURental.Controllers
 
             if (rentalJob == null || rentalJob.Status != JobStatus.Running)
             {
-                TempData["ErrorMessage"] = "Unable to stop this job.";
-                return RedirectToAction("Index", "Home");
+                TempData["ErrorMessage"] = "This job is not available to be stopped.";
+                return RedirectToAction("Index", "Dashboard");
             }
 
-
-            // Mark job as completed and calculate final cost
+            // --- ACCURATE FINANCIAL CALCULATION IN SECONDS AND INR ---
             rentalJob.ActualEndAt = DateTime.UtcNow;
             rentalJob.Status = JobStatus.Completed;
 
             var duration = rentalJob.ActualEndAt.Value - rentalJob.ActualStartAt.Value;
-            double minutesRented = Math.Max(1, duration.TotalMinutes); // Ensure a minimum charge
-            int finalCharge = (int)((minutesRented / 60.0) * rentalJob.GpuListing.PricePerHourInCents);
-            rentalJob.FinalChargeInCents = finalCharge;
+            // 1. Calculate the total duration in seconds. Ensure a minimum of 1 second.
+            decimal totalSeconds = (decimal)Math.Max(1, duration.TotalSeconds);
+
+            // 2. Calculate price per second using high-precision decimal math
+            decimal pricePerSecondInINR = rentalJob.GpuListing.PricePerHourInINR / 3600.0m;
+
+            // 3. Calculate the exact final charge and store it.
+            // We don't round here to store the most precise value possible.
+            rentalJob.FinalChargeInINR = totalSeconds * pricePerSecondInINR;
+            // ---------------------------------------------------------------
 
             var renter = await _userManager.FindByIdAsync(renterId);
-
-
             var provider = rentalJob.GpuListing.Provider;
 
             if (renter == null || provider == null)
             {
-                TempData["ErrorMessage"] = "A user account error occurred. Please contact support.";
-                return RedirectToAction("Index", "Home");
+                TempData["ErrorMessage"] = "A user account error occurred while processing payment. Please contact support.";
+                return RedirectToAction("Index", "Dashboard");
             }
 
-            renter.BalanceInCents -= finalCharge;
+            // Update Balances using the new decimal properties
+            renter.BalanceInINR -= rentalJob.FinalChargeInINR.Value;
+            provider.BalanceInINR += rentalJob.FinalChargeInINR.Value;
 
-            var chargeLedgerEntry = new WalletLedgerEntry
+            // Create Ledger Entry for the Renter's Charge
+            _context.WalletLedgerEntries.Add(new WalletLedgerEntry
             {
                 LedgerId = Guid.NewGuid().ToString(),
                 UserId = renter.Id,
                 RentalJobId = rentalJob.RentalJobId,
                 Type = LedgerEntryType.Charge,
-                AmountInCents = finalCharge,
+                AmountInINR = rentalJob.FinalChargeInINR.Value,
                 Status = LedgerEntryStatus.Completed,
                 CreatedAt = DateTime.UtcNow
-            };
-            _context.WalletLedgerEntries.Add(chargeLedgerEntry);
+            });
 
-            provider.BalanceInCents += finalCharge;
-
-            var providerEarningsEntry = new WalletLedgerEntry
+            // Create Ledger Entry for the Provider's Payout
+            _context.WalletLedgerEntries.Add(new WalletLedgerEntry
             {
                 LedgerId = Guid.NewGuid().ToString(),
                 UserId = provider.Id,
                 RentalJobId = rentalJob.RentalJobId,
                 Type = LedgerEntryType.Payout,
-                AmountInCents = finalCharge,
+                AmountInINR = rentalJob.FinalChargeInINR.Value,
                 Status = LedgerEntryStatus.Completed,
                 CreatedAt = DateTime.UtcNow
-            };
-            _context.WalletLedgerEntries.Add(providerEarningsEntry);
+            });
 
             rentalJob.GpuListing.Status = GpuStatus.Published;
 
             await _context.SaveChangesAsync();
 
-            TempData["SuccessMessage"] = "Rental completed successfully! You were charged $" + (finalCharge / 100.0m).ToString("F2");
             return RedirectToAction("Index", "Marketplace");
         }
     }

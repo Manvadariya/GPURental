@@ -43,7 +43,7 @@ namespace GPURental.Controllers
             
             var viewModel = new WalletDashboardViewModel
             {
-                CurrentBalanceInCents = user.BalanceInCents,
+                CurrentBalanceInINR = user.BalanceInINR,
                 TransactionHistory = transactionHistory
             };
 
@@ -51,40 +51,36 @@ namespace GPURental.Controllers
             return View(viewModel);
         }
 
-        
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> AddFunds(decimal amount)
         {
             if (amount <= 0)
             {
-                
                 TempData["ErrorMessage"] = "Please enter a positive amount to add.";
                 return RedirectToAction("Index");
             }
 
             var user = await _userManager.GetUserAsync(User);
-            int amountInCents = (int)(amount * 100);
 
-            
             var ledgerEntry = new WalletLedgerEntry
             {
                 LedgerId = Guid.NewGuid().ToString(),
                 UserId = user.Id,
                 Type = LedgerEntryType.TopUp,
-                AmountInCents = amountInCents,
+                AmountInINR = amount, // Use the decimal amount directly
                 Status = LedgerEntryStatus.Completed,
                 CreatedAt = DateTime.UtcNow
             };
             _context.WalletLedgerEntries.Add(ledgerEntry);
 
-            
-            user.BalanceInCents += amountInCents;
+            // Add the decimal amount directly to the user's balance
+            user.BalanceInINR += amount;
 
-            
             await _context.SaveChangesAsync();
 
-            TempData["SuccessMessage"] = $"Successfully added ${amount.ToString("F2")} to your wallet!";
+            TempData["SuccessMessage"] = $"Successfully added ₹{amount:F2} to your wallet!";
             return RedirectToAction("Index");
         }
     }

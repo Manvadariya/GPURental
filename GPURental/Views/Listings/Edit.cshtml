@@ -3,112 +3,152 @@
     ViewData["Title"] = "Edit Listing";
 }
 
-<h1>Edit: @Model.Title</h1>
-<hr />
+<!-- Apply the same background and font as the other form pages -->
+<script>document.body.classList.add('login-page-background');</script>
 
-<div class="row">
-    <div class="col-md-8">
-        <form asp-action="Edit" method="post" enctype="multipart/form-data">
-            <div asp-validation-summary="All" class="text-danger"></div>
+<div class="login-container">
+    <div class="login-card shadow-lg" style="max-width: 900px;">
+        <div class="text-center">
+            <h1 class="h3 font-weight-bold mb-2">Edit Listing</h1>
+            <p class="text-muted">Update the details for your machine.</p>
+        </div>
 
-            @* Hidden field to ensure we know which listing we are updating *@
-            <input type="hidden" asp-for="ListingId" />
+        <div class="row mt-4">
+            <!-- Left Column: Form -->
+            <div class="col-md-7">
+                <form asp-action="Edit" method="post" enctype="multipart/form-data">
+                    <div asp-validation-summary="All" class="text-danger small"></div>
 
-            <div class="form-group">
-                <label asp-for="Title"></label>
-                <input asp-for="Title" class="form-control" />
-                <span asp-validation-for="Title" class="text-danger"></span>
+                    <input type="hidden" asp-for="ListingId" />
+                    <input type="hidden" asp-for="ExistingImagePath" />
+
+                    <div class="form-group">
+                        <label asp-for="Title" class="login-label"></label>
+                        <input asp-for="Title" class="form-control login-input" required />
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group col-md-6">
+                            <label asp-for="GpuModel" class="login-label"></label>
+                            <input asp-for="GpuModel" id="gpuModelInput" class="form-control login-input" required />
+                        </div>
+                        <div class="form-group col-md-6">
+                            <label asp-for="CpuModel" class="login-label"></label>
+                            <input asp-for="CpuModel" class="form-control login-input" />
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group col-md-4">
+                            <label asp-for="VramInGB" class="login-label"></label>
+                            <input asp-for="VramInGB" id="vramInput" type="number" class="form-control login-input" required />
+                        </div>
+                        <div class="form-group col-md-4">
+                            <label asp-for="RamInGB" class="login-label"></label>
+                            <input asp-for="RamInGB" type="number" class="form-control login-input" required />
+                        </div>
+                        <div class="form-group col-md-4">
+                            <label asp-for="DiskInGB" class="login-label"></label>
+                            <input asp-for="DiskInGB" type="number" class="form-control login-input" required />
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group col-md-6">
+                            <label asp-for="OperatingSystem" class="login-label"></label>
+                            <input asp-for="OperatingSystem" class="form-control login-input" />
+                        </div>
+                        <div class="form-group col-md-6">
+                            <label asp-for="Location" class="login-label"></label>
+                            <input asp-for="Location" class="form-control login-input" />
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label asp-for="PricePerHourInINR" class="login-label"></label>
+                        <div class="input-group">
+                            <input asp-for="PricePerHourInINR" id="priceInput" type="number" class="form-control login-input" required />
+                            <div class="input-group-append">
+                                <button id="suggestPriceBtn" type="button" class="btn btn-outline-secondary suggest-btn">AI Suggest</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label asp-for="Image" class="login-label">Upload New Image (Optional)</label>
+                        <div class="custom-file">
+                            <input asp-for="Image" class="custom-file-input" id="customFile">
+                            <label class="custom-file-label" for="customFile">Choose file to replace...</label>
+                        </div>
+                    </div>
+
+                    <!-- --- UPDATED BUTTONS SECTION --- -->
+                    <div class="form-row mt-4">
+                        <div class="col">
+                            <a asp-controller="Dashboard" asp-action="Index" class="btn btn-secondary btn-block">Cancel</a>
+                        </div>
+                        <div class="col">
+                            <button type="submit" class="btn btn-primary btn-block glow-accent">Save Changes</button>
+                        </div>
+                    </div>
+                    <!-- ----------------------------- -->
+                </form>
             </div>
 
-            <div class="form-row">
-                <div class="form-group col-md-6">
-                    <label asp-for="GpuModel"></label>
-                    <input asp-for="GpuModel" class="form-control" />
-                    <span asp-validation-for="GpuModel" class="text-danger"></span>
+            <!-- Right Column: Existing Image -->
+            <div class="col-md-5">
+                <label class="login-label">Current Image</label>
+                <div class="edit-image-container">
+                    @if (!string.IsNullOrEmpty(Model.ExistingImagePath))
+                    {
+                        <img src="~/images/listings/@Model.ExistingImagePath" class="img-fluid rounded" alt="Current Listing Image" />
+                    }
+                    else
+                    {
+                        <div class="no-image-placeholder">
+                            <p>No image uploaded.</p>
+                        </div>
+                    }
                 </div>
-                <div class="form-group col-md-6">
-                    <label asp-for="CpuModel"></label>
-                    <input asp-for="CpuModel" class="form-control" />
-                    <span asp-validation-for="CpuModel" class="text-danger"></span>
-                </div>
             </div>
-
-            <div class="form-row">
-                <div class="form-group col-md-4">
-                    <label asp-for="VramInGB"></label>
-                    <input asp-for="VramInGB" type="number" class="form-control" />
-                    <span asp-validation-for="VramInGB" class="text-danger"></span>
-                </div>
-                <div class="form-group col-md-4">
-                    <label asp-for="RamInGB"></label>
-                    <input asp-for="RamInGB" type="number" class="form-control" />
-                    <span asp-validation-for="RamInGB" class="text-danger"></span>
-                </div>
-                <div class="form-group col-md-4">
-                    <label asp-for="DiskInGB"></label>
-                    <input asp-for="DiskInGB" type="number" class="form-control" />
-                    <span asp-validation-for="DiskInGB" class="text-danger"></span>
-                </div>
-            </div>
-
-            <div class="form-group">
-                <label asp-for="OperatingSystem"></label>
-                <input asp-for="OperatingSystem" class="form-control" />
-                <span asp-validation-for="OperatingSystem" class="text-danger"></span>
-            </div>
-
-            <div class="form-group">
-                <label asp-for="Location"></label>
-                <input asp-for="Location" class="form-control" />
-                <span asp-validation-for="Location" class="text-danger"></span>
-            </div>
-
-            <div class="form-group">
-                <label asp-for="PricePerHourInCents"></label>
-                <input asp-for="PricePerHourInCents" type="number" class="form-control" />
-                <span asp-validation-for="PricePerHourInCents" class="text-danger"></span>
-            </div>
-
-            <div class="form-group">
-                <label asp-for="Image">Upload New Image (to replace existing)</label>
-                <div class="custom-file">
-                    <input asp-for="Image" class="custom-file-input"> @* REMOVE multiple *@
-                    <label class="custom-file-label">Choose new image...</label>
-                </div>
-            </div>
-
-            <div class="form-group mt-4">
-                <button type="submit" class="btn btn-primary">Save Changes</button>
-                <a asp-action="Index" class="btn btn-secondary">Cancel</a>
-            </div>
-        </form>
-    </div>
-    <div class="col-md-4">
-        <h4>Current Image</h4>
-        <hr />
-        @if (!string.IsNullOrEmpty(Model.ExistingImagePath))
-        {
-            <img src="~/images/listings/@Model.ExistingImagePath" class="img-fluid rounded" alt="Current Image" />
-        }
-        else
-        {
-            <p>No image has been uploaded.</p>
-        }
+        </div>
     </div>
 </div>
+
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
     <script>
-        // Script to display selected file names in the file input
         $(document).ready(function () {
+            // Script to display selected file name
             $('.custom-file-input').on("change", function () {
-                var fileLabel = $(this).next('.custom-file-label');
-                var files = $(this)[0].files;
-                if (files.length > 1) {
-                    fileLabel.html(files.length + ' files selected');
-                } else if (files.length == 1) {
-                    fileLabel.html(files[0].name);
+                var fileName = $(this).val().split("\\").pop();
+                if(fileName) {
+                    $(this).next('.custom-file-label').html(fileName);
+                } else {
+                    $(this).next('.custom-file-label').html('Choose file to replace...');
+                }
+            });
+
+            // AI Suggest Price script (same as Create page)
+            $('#suggestPriceBtn').on('click', function () {
+                var gpuModel = $('#gpuModelInput').val();
+                var vram = $('#vramInput').val();
+
+                if (gpuModel && vram) {
+                    $('#suggestPriceBtn').text('Suggesting...');
+                    fetch(`/Listings/SuggestPrice?gpuModel=${encodeURIComponent(gpuModel)}&vram=${vram}`)
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.success && data.price > 0) {
+                                $('#priceInput').val(data.price);
+                            } else {
+                                alert("Could not suggest a price. Please check GPU Model and VRAM.");
+                            }
+                            $('#suggestPriceBtn').text('AI Suggest');
+                        });
+                } else {
+                    alert("Please fill in GPU Model and VRAM before suggesting a price.");
                 }
             });
         });

@@ -3,56 +3,67 @@
     ViewData["Title"] = "Register";
 }
 
-<h1>@ViewData["Title"]</h1>
+<!-- We add a specific class to the body from the view using a small script -->
+<script>document.body.classList.add('login-page-background');</script>
 
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Register" method="post">
-            <h4>Create a new account.</h4>
-            <hr />
+<div class="login-container">
+    <div class="login-card shadow-lg" style="max-width: 500px;">
+        <div class="text-center">
+            <h1 class="h3 font-weight-bold mb-2">Create an Account</h1>
+            <p class="text-muted">Join the future of distributed computing.</p>
+        </div>
+
+        <form class="mt-4" asp-action="Register" method="post">
             <div asp-validation-summary="All" class="text-danger"></div>
 
             <div class="form-group">
-                <label asp-for="FullName"></label>
-                <input asp-for="FullName" class="form-control" />
+                <label asp-for="FullName" class="login-label"></label>
+                <input asp-for="FullName" class="form-control login-input" required />
                 <span asp-validation-for="FullName" class="text-danger"></span>
             </div>
-
+            
             <div class="form-group">
-                <label asp-for="Timezone"></label>
-                <input asp-for="Timezone" class="form-control" />
+                <label asp-for="Timezone" class="login-label"></label>
+                <input asp-for="Timezone" class="form-control login-input" />
                 <span asp-validation-for="Timezone" class="text-danger"></span>
             </div>
 
             <div class="form-group">
-                <label asp-for="Email"></label>
-                <input asp-for="Email" class="form-control" />
+                <label asp-for="Email" class="login-label"></label>
+                <input asp-for="Email" class="form-control login-input" required />
                 <span asp-validation-for="Email" class="text-danger"></span>
             </div>
 
             <div class="form-group">
-                <label asp-for="Password"></label>
-                <input asp-for="Password" class="form-control" />
+                <label asp-for="Password" class="login-label"></label>
+                <input asp-for="Password" class="form-control login-input" required />
                 <span asp-validation-for="Password" class="text-danger"></span>
             </div>
-
+            
             <div class="form-group">
-                <label asp-for="ConfirmPassword"></label>
-                <input asp-for="ConfirmPassword" class="form-control" />
+                <label asp-for="ConfirmPassword" class="login-label"></label>
+                <input asp-for="ConfirmPassword" class="form-control login-input" required />
                 <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
             </div>
 
             <div class="form-group">
-                <label asp-for="UserRole"></label>
-                <select asp-for="UserRole" class="form-control">
-                    <option value="">-- Select a role --</option>
+                <label asp-for="UserRole" class="login-label"></label>
+                <select asp-for="UserRole" class="form-control login-input" required>
+                    <option value="">-- Please select a role --</option>
                     <option value="Renter">I want to rent GPUs</option>
                     <option value="Provider">I want to provide GPUs</option>
                 </select>
                 <span asp-validation-for="UserRole" class="text-danger"></span>
             </div>
 
-            <button type="submit" class="btn btn-primary">Register</button>
+            <button type="submit" class="btn btn-primary btn-block glow-accent mt-4">
+              Create Account
+            </button>
+
+            <div class="text-center text-muted small mt-3">
+                Already have an account?
+                <a asp-action="Login" class="font-weight-bold">Log in</a>
+            </div>
         </form>
     </div>
 </div>

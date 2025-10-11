@@ -3,134 +3,273 @@
     ViewData["Title"] = "My Dashboard";
 }
 
-<h1>@ViewData["Title"]</h1>
-<hr />
+<div class="provider-dashboard-container">
+    <h1 class="admin-header">@ViewData["Title"]</h1>
 
-<!-- Active Jobs Section -->
-<h3>Active Rentals</h3>
-@if (Model.ActiveJobs.Any())
-{
-    <div class="list-group">
-        @foreach (var job in Model.ActiveJobs)
-        {
-            <a asp-controller="Rental" asp-action="Status" asp-route-id="@job.RentalJobId" class="list-group-item list-group-item-action">
-                <div class="d-flex w-100 justify-content-between">
-                    <h5 class="mb-1">@job.GpuListing.Title</h5>
-                    <small>Status: <span class="badge badge-success">@job.Status</span></small>
+    <!-- Stat Cards -->
+    <div class="row">
+        <div class="col-lg-3 col-md-6 mb-4">
+            <div class="provider-stat-card shadow-lg" style="background-color: #34d399;">
+                <p class="stat-title">Active Rentals</p>
+                <p class="stat-number">@Model.ActiveJobsCount</p>
+            </div>
+        </div>
+        <div class="col-lg-3 col-md-6 mb-4">
+            <div class="provider-stat-card shadow-lg" style="background-color: #60a5fa;">
+                <p class="stat-title">Total Spent</p>
+                <p class="stat-number">₹@Model.TotalSpent.ToString("F2")</p>
+            </div>
+        </div>
+        <div class="col-lg-3 col-md-6 mb-4">
+            <div class="provider-stat-card shadow-lg" style="background-color: #818cf8;">
+                <p class="stat-title">Completed Jobs</p>
+                <p class="stat-number">@Model.JobsCompletedCount</p>
+            </div>
+        </div>
+        <div class="col-lg-3 col-md-6 mb-4">
+            <div class="provider-stat-card shadow-lg" style="background-color: #f59e0b;">
+                <p class="stat-title">Open Disputes</p>
+                <p class="stat-number">@Model.OpenDisputesCount</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Charts Section (No Changes) -->
+    <div class="row">
+        <div class="col-lg-6 mb-4">
+            <h2 class="section-header text-center">Spending Distribution</h2>
+            <div class="admin-table-card p-4">
+                <div class="chart-container"><canvas id="spendingChart"></canvas></div>
+                <div id="spendingChartLegend" class="chart-legend"></div>
+            </div>
+        </div>
+        <div class="col-lg-6 mb-4">
+            <h2 class="section-header text-center">GPU Usage (by Job Count)</h2>
+            <div class="admin-table-card p-4">
+                <div class="chart-container"><canvas id="jobCountChart"></canvas></div>
+                <div id="jobCountChartLegend" class="chart-legend"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Active Jobs Section (No Changes) -->
+    @if (Model.ActiveJobs.Any())
+    {
+        <div class="mt-4">
+            <h2 class="section-header">Active Rentals</h2>
+            <div class="list-group">
+                @foreach (var job in Model.ActiveJobs)
+                {
+                    <a asp-controller="Rental" asp-action="Status" asp-route-id="@job.RentalJobId" class="list-group-item list-group-item-action flex-column align-items-start">
+                        <div class="d-flex w-100 justify-content-between">
+                            <h5 class="mb-1">@job.GpuListing.Title</h5>
+                            <small>Status: <span class="badge badge-success">@job.Status</span></small>
+                        </div>
+                        <p class="mb-1">Started on @job.ActualStartAt.Value.ToShortDateString() at @job.ActualStartAt.Value.ToShortTimeString()</p>
+                        <small class="text-info">Click to view status and stop the job.</small>
+                    </a>
+                }
+            </div>
+        </div>
+    }
+
+    <!-- Rental History Table -->
+    <div class="mt-5">
+        <h2 class="section-header">Rental History</h2>
+        <div class="admin-table-card">
+            <div class="table-responsive">
+                <table class="table admin-table admin-table-sm mb-0">
+                    <thead class="thead-light">
+                        <tr>
+                            <th>Listing</th>
+                            <th>End Date</th>
+                            <th>Duration (Mins)</th>
+                            <th>Final Cost</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (Model.JobHistory.Any())
+                        {
+                            @foreach (var job in Model.JobHistory)
+                            {
+                                <tr>
+                                    <td class="font-weight-bold">@job.GpuListing.Title</td>
+                                    <td>@job.ActualEndAt?.ToShortDateString()</td>
+                                    <td>@((job.ActualEndAt - job.ActualStartAt)?.TotalMinutes.ToString("F0"))</td>
+                                    <td class="font-weight-bold text-primary">₹@((job.FinalChargeInINR)?.ToString("F2"))</td>
+                                    <td>
+                                        @if (job.Status == JobStatus.Completed)
+                                        {
+                                            <span class="status-badge-sm bg-success-light text-success-dark">Completed</span>
+                                        }
+                                        else if (job.Status == JobStatus.Failed)
+                                        {
+                                            <span class="status-badge-sm bg-danger-light text-danger-dark">Failed</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="status-badge-sm bg-secondary-light text-secondary-dark">@job.Status</span>
+                                        }
+                                    </td>
+                                </tr>
+                            }
+                        }
+                        else
+                        {
+                            <tr><td colspan="5" class="text-center p-4 text-muted">You have no past rental jobs.</td></tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- My Activity Section -->
+    <div class="mt-5">
+        <h2 class="admin-header text-center">My Recent Activity</h2>
+        <div class="row">
+            <!-- My Disputes -->
+            <div class="col-lg-6 mb-4">
+                <h3 class="section-header">My Disputes</h3>
+                <div class="admin-table-card">
+                    <div class="table-responsive">
+                        <table class="table admin-table admin-table-sm mb-0">
+                            <thead>
+                                <tr>
+                                    <th>Listing</th>
+                                    <th>Reason</th>
+                                    <th>Status</th>
+                                    <th class="text-right">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if (Model.MyDisputes.Any())
+                                {
+                                    @foreach (var dispute in Model.MyDisputes)
+                                    {
+                                        <tr>
+                                            <td>@dispute.RentalJob.GpuListing.Title</td>
+                                            <td>@dispute.Reason</td>
+                                            <td>
+                                                <span class="status-badge-sm @(dispute.Status == DisputeStatus.Submitted ? "bg-warning-light text-warning-dark" : "bg-secondary-light text-secondary-dark")">
+                                                    @dispute.Status
+                                                </span>
+                                            </td>
+                                            <td class="text-right">
+                                                @if (dispute.Status == DisputeStatus.Submitted)
+                                                {
+                                                    <form asp-controller="Dispute" asp-action="Withdraw" asp-route-id="@dispute.DisputeId" method="post">
+                                                        <button type="submit" class="btn btn-danger btn-sm">Withdraw</button>
+                                                    </form>
+                                                }
+                                            </td>
+                                        </tr>
+                                    }
+                                }
+                                else
+                                {
+                                    <tr><td colspan="4" class="text-center p-4 text-muted">You have no open disputes.</td></tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
-                <p class="mb-1">Started on @job.ActualStartAt.Value.ToShortDateString() at @job.ActualStartAt.Value.ToShortTimeString()</p>
-                <small>Click to view status and stop the job.</small>
-            </a>
-        }
-    </div>
-}
-else
-{
-    <p>You have no active rentals. <a asp-controller="Marketplace" asp-action="Index">Find a GPU to rent!</a></p>
-}
-
-<hr class="my-4" />
-
-<h3>Rental History</h3>
-@if (Model.JobHistory.Any())
-{
-    <table class="table table-sm">
-        <thead>
-            <tr>
-                <th>Listing</th>
-                <th>End Date</th>
-                <th>Duration</th>
-                <th>Final Cost</th>
-                <th>Status</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var job in Model.JobHistory)
-            {
-                <tr>
-                    <td>@job.GpuListing.Title</td>
-                    <td>@job.ActualEndAt?.ToShortDateString()</td>
-                    <td>@((job.ActualEndAt - job.ActualStartAt)?.TotalMinutes.ToString("F0")) mins</td>
-                    <td>$@((job.FinalChargeInCents / 100.0m)?.ToString("F2"))</td>
-                    <td><span class="badge badge-secondary">@job.Status</span></td>
-                </tr>
-            }
-        </tbody>
-    </table>
-}
-else
-{
-    <p>You have no past rental jobs.</p>
-}
-
-<hr class="my-4" />
-
-<div class="row">
-    <!-- My Activity -->
-    <div class="col-md-6">
-        <h4>My Recent Activity</h4>
-
-        <h5>My Disputes</h5>
-        @if (Model.MyDisputes.Any())
-        {
-            <ul class="list-group">
-                @foreach (var dispute in Model.MyDisputes)
-                {
-                    <li class="list-group-item">@dispute.Reason - Status: @dispute.Status</li>
-                }
-            </ul>
-        }
-        else
-        {
-
-            <p>You have not filed any disputes.</p>
-        }
-
-        <h5 class="mt-3">My Reviews</h5>
-        @if (Model.MyReviews.Any())
-        {
-            <ul class="list-group">
-                @foreach (var review in Model.MyReviews)
-                {
-                    <li class="list-group-item">@review.Rating stars - "@review.Comment"</li>
-                }
-            </ul>
-        }
-        else
-        {
-
-            <p>You have not submitted any reviews.</p>
-        }
-
-    </div>
-
-    <!-- Recent Transactions -->
-    <div class="col-md-6">
-        <h4>Recent Transactions</h4>
-        <table class="table">
-            <tbody>
-                @foreach (var entry in Model.TransactionHistory)
-                {
-                    <tr>
-                        <td>@entry.CreatedAt.ToShortDateString()</td>
-                        <td>
-                            @if (entry.Type == LedgerEntryType.Payout)
-                            {
-                                <span>Provider Payout</span>
-                            }
-                            else
-                            {
-
-                                @entry.Type
-                            }
-                        </td>
-                        <td class="@(entry.Type == LedgerEntryType.Charge ? "text-danger" : "text-success")">
-                            $@((entry.AmountInCents / 100.0m).ToString("F2"))
-                        </td>
-                    </tr>
-                }
-            </tbody>
-        </table>
-        <a asp-controller="Wallet" asp-action="Index">View Full Wallet History & Add Funds</a>
+            </div>
+            <!-- My Reviews -->
+            <div class="col-lg-6 mb-4">
+                <h3 class="section-header">My Reviews</h3>
+                <div class="admin-table-card">
+                    <div class="table-responsive">
+                        <table class="table admin-table admin-table-sm mb-0">
+                            <thead>
+                                <tr>
+                                    <th>Listing</th>
+                                    <th>Rating</th>
+                                    <th class="text-right">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if (Model.MyReviews.Any())
+                                {
+                                    @foreach (var review in Model.MyReviews)
+                                    {
+                                        <tr>
+                                            <td>@review.GpuListing.Title</td>
+                                            <td class="review-stars">
+                                                @for (int i = 0; i < review.Rating; i++)
+                                                {
+                                                    <span>&#9733;</span>
+                                                }
+                                            </td>
+                                            <td class="text-right">
+                                                <form asp-controller="Review" asp-action="Delete" asp-route-id="@review.ReviewId" method="post">
+                                                    <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+                                                </form>
+                                            </td>
+                                        </tr>
+                                    }
+                                }
+                                else
+                                {
+                                    <tr><td colspan="3" class="text-center p-4 text-muted">You have not written any reviews.</td></tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
+
+@section Scripts {
+    @* --- This is the full, correct JavaScript for the charts --- *@
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            lucide.createIcons();
+
+            var spendingData = @Html.Raw(Json.Serialize(Model.SpendingByGpuData));
+            var jobCountData = @Html.Raw(Json.Serialize(Model.JobCountByGpuData));
+
+            const chartColors = ['#60a5fa', '#34d399', '#f59e0b', '#818cf8', '#ef4444', '#14b8a6'];
+            const chartColorsAlt = ['#818cf8', '#f59e0b', '#60a5fa', '#34d399', '#ef4444', '#14b8a6'];
+
+            if (spendingData && spendingData.length > 0) {
+                const spendingCtx = document.getElementById('spendingChart').getContext('2d');
+                new Chart(spendingCtx, {
+                    type: 'doughnut',
+                    data: { labels: spendingData.map(d => d.label), datasets: [{ data: spendingData.map(d => d.value), backgroundColor: chartColors, borderColor: '#ffffff', borderWidth: 4 }] },
+                    options: { responsive: true, cutout: '70%', plugins: { legend: { display: false }, tooltip: { callbacks: { label: (c) => ` ₹${c.raw.toFixed(2)}` } } } }
+                });
+                buildLegend(spendingData, 'spendingChartLegend', '$', 2, '');
+            } else {
+                 document.getElementById('spendingChart').parentElement.innerHTML = '<div class="text-center p-5 text-muted">No spending data yet.</div>';
+            }
+
+            if (jobCountData && jobCountData.length > 0) {
+                const jobCountCtx = document.getElementById('jobCountChart').getContext('2d');
+                new Chart(jobCountCtx, {
+                    type: 'doughnut',
+                    data: { labels: jobCountData.map(d => d.label), datasets: [{ data: jobCountData.map(d => d.value), backgroundColor: chartColorsAlt, borderColor: '#ffffff', borderWidth: 4 }] },
+                    options: { responsive: true, cutout: '70%', plugins: { legend: { display: false }, tooltip: { callbacks: { label: (c) => ` ${c.raw} jobs` } } } }
+                });
+                buildLegend(jobCountData, 'jobCountChartLegend', '', 0, ' jobs');
+            } else {
+                 document.getElementById('jobCountChart').parentElement.innerHTML = '<div class="text-center p-5 text-muted">No usage data yet.</div>';
+            }
+
+            function buildLegend(data, elementId, prefix = '', decimals = 0, suffix = '') {
+                const legendContainer = document.getElementById(elementId);
+                if (!legendContainer) return;
+                const total = data.reduce((sum, item) => sum + item.value, 0);
+
+                data.forEach((item, index) => {
+                    const percentage = total > 0 ? (item.value / total * 100).toFixed(0) : 0;
+                    const color = chartColors[index % chartColors.length];
+                    legendContainer.innerHTML += `<div class="d-flex align-items-center justify-content-between p-2 rounded mb-1" style="background-color: ${color.replace(')', ', 0.1)')};"><div class="d-flex align-items-center"><div style="width: 12px; height: 12px; background-color: ${color}; border-radius: 50%;"></div><span class="ml-2 small font-weight-medium">${item.label}</span></div><div class="text-right"><div class="small font-weight-bold" style="color: ${color}">${prefix}${item.value.toFixed(decimals)}${suffix}</div><div class="small text-muted">${percentage}%</div></div></div>`;
+                });
+            }
+        });
+    </script>
+}

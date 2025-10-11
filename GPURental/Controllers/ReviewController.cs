@@ -109,5 +109,23 @@ namespace GPURental.Controllers
             
             return View(model);
         }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Delete(string id)
+        {
+            var userId = _userManager.GetUserId(User);
+            var review = await _context.Reviews.FindAsync(id);
+
+            if (review == null || review.AuthorId != userId)
+            {
+                return NotFound();
+            }
+
+            _context.Reviews.Remove(review);
+            await _context.SaveChangesAsync();
+            TempData["SuccessMessage"] = "Your review has been deleted.";
+
+            return RedirectToAction("Index", "Dashboard");
+        }
     }
 }

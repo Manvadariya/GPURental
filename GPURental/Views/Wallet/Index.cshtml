@@ -3,99 +3,118 @@
     ViewData["Title"] = "My Wallet";
 }
 
-<h1>@ViewData["Title"]</h1>
-<hr />
-
-@if (TempData["SuccessMessage"] != null)
-{
-    <div class="alert alert-success">@TempData["SuccessMessage"]</div>
-}
-@if (TempData["ErrorMessage"] != null)
-{
-    <div class="alert alert-danger">@TempData["ErrorMessage"]</div>
-}
-
-
-<div class="row">
-    <!-- Balance & Add Funds -->
-    <div class="col-md-4">
-        <div class="card">
-            <div class="card-body text-center">
-                <h5 class="card-title">Current Balance</h5>
-                <h2 class="display-4 text-success">
-                    $@((Model.CurrentBalanceInCents / 100.0m).ToString("F2"))
-                </h2>
-            </div>
-        </div>
-        
-        <div class="card mt-4">
-            <div class="card-body">
-                <h5 class="card-title">Add Funds</h5>
-                <form asp-action="AddFunds" method="post">
-                    <div class="form-group">
-                        <label>Amount (in USD)</label>
-                        <input type="number" name="amount" class="form-control" min="1.00" step="0.01" required />
-                    </div>
-                    <button type="submit" class="btn btn-primary btn-block">Add Funds</button>
-                    <small class="form-text text-muted">This is a demo. No real payment will be processed.</small>
-                </form>
-            </div>
-        </div>
+<div class="wallet-container">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="admin-header mb-0">@ViewData["Title"]</h1>
     </div>
 
-    <!-- Transaction History -->
-    <div class="col-md-8">
-        <h4>Transaction History</h4>
-        @if (Model.TransactionHistory.Any())
-        {
-            <table class="table table-striped">
-                <thead>
-                    <tr>
-                        <th>Date</th>
-                        <th>Type</th>
-                        <th>Amount</th>
-                        <th>Status</th>
-                        <th></th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach (var entry in Model.TransactionHistory)
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success">@TempData["SuccessMessage"]</div>
+    }
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-danger">@TempData["ErrorMessage"]</div>
+    }
+
+    <div class="row">
+        <!-- Balance & Add Funds Column -->
+        <div class="col-lg-4 mb-4">
+            <div class="card wallet-card shadow-sm mb-4">
+                <div class="card-body text-center">
+                    <h5 class="card-title text-muted">Current Balance</h5>
+                    <h2 class="display-4 font-weight-bold text-success">
+                        ₹@((Model.CurrentBalanceInINR).ToString("F2"))
+                    </h2>
+                </div>
+            </div>
+
+            <div class="card wallet-card shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title font-weight-bold">Add Funds</h5>
+                    <form asp-action="AddFunds" method="post">
+                        <div class="form-group">
+                            <label for="amount" class="login-label">Amount (USD)</label>
+                            <div class="input-group">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text">₹</span>
+                                </div>
+                                <input type="number" name="amount" id="amount" class="form-control login-input" min="1.00" step="0.01" required placeholder="e.g., 25.00" />
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-primary btn-block">Add Funds</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Transaction History Column -->
+        <div class="col-lg-8">
+            <h3 class="section-header">Transaction History</h3>
+            <div class="admin-table-card">
+                <div class="table-responsive">
+                    @if (Model.TransactionHistory.Any())
                     {
-                        <tr>
-                            <td>@entry.CreatedAt.ToShortDateString()</td>
-                            <td>
-                                @if (entry.Type == LedgerEntryType.Payout)
+                        <table class="table admin-table admin-table-sm mb-0">
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Type</th>
+                                    <th>Amount</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var entry in Model.TransactionHistory)
                                 {
-                                    <span>Provider Payout</span>
+                                    <tr>
+                                        <td>@entry.CreatedAt.ToShortDateString()</td>
+                                        <td>
+                                            @if (entry.Type == LedgerEntryType.Payout)
+                                            {
+                                                <span class="badge badge-info">Provider Payout</span>
+                                            }
+                                            else if (entry.Type == LedgerEntryType.TopUp)
+                                            {
+
+                                                <span class="badge badge-success">Top Up</span>
+                                            }
+                                            else if (entry.Type == LedgerEntryType.Charge)
+                                            {
+
+                                                <span class="badge badge-danger">Rental Charge</span>
+                                            }
+                                            else
+                                            {
+
+                                                <span class="badge badge-warning">@entry.Type</span>
+                                            }
+                                        </td>
+                                        <td class="font-weight-bold @(entry.Type == LedgerEntryType.Charge ? "text-danger" : "text-success")">
+                                            ₹@entry.AmountInINR.ToString("F2")
+                                        </td>
+                                        <td>
+                                            <span class="badge @(entry.Status == LedgerEntryStatus.Completed ? "badge-light" : "badge-secondary")">@entry.Status</span>
+                                        </td>
+                                        <td>
+                                            @if (entry.Type == LedgerEntryType.Charge && entry.RentalJobId != null)
+                                            {
+                                                <a asp-controller="Review" asp-action="Create" asp-route-rentalJobId="@entry.RentalJobId" class="btn btn-outline-info btn-sm">Review</a>
+                                                <a asp-controller="Dispute" asp-action="Create" asp-route-rentalJobId="@entry.RentalJobId" class="btn btn-outline-danger btn-sm ml-1">Issue</a>
+                                            }
+                                        </td>
+                                    </tr>
                                 }
-                                else
-                                {
-                                    @entry.Type
-                                }
-                            </td>
-                            @{
-                                var amountClass = entry.Type == LedgerEntryType.Charge ? "text-danger" : "text-success";
-                            }
-                            <td class="@amountClass">
-                                $@((entry.AmountInCents / 100.0m).ToString("F2"))
-                            </td>
-                            <td>@entry.Status</td>
-                            <td>
-                                @if (entry.Type == LedgerEntryType.Charge && entry.RentalJobId != null)
-                                {
-                                    <a asp-controller="Review" asp-action="Create" asp-route-rentalJobId="@entry.RentalJobId">Leave Review</a>
-                                    <span class="mx-2">|</span>
-                                    <a asp-controller="Dispute" asp-action="Create" asp-route-rentalJobId="@entry.RentalJobId" class="text-danger">Report Issue</a>
-                                }
-                            </td>
-                        </tr>
+                            </tbody>
+                        </table>
                     }
-                </tbody>
-            </table>
-        }
-        else
-        {
-            <p>You have no transaction history yet.</p>
-        }
+                    else
+                    {
+                        <div class="text-center p-4 text-muted">You have no transaction history yet.</div>
+                    }
+                </div>
+            </div>
+        </div>
     </div>
 </div>

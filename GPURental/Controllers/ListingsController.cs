@@ -36,14 +36,10 @@ namespace GPURental.Controllers
         }
 
         // Provider Dashboard
-        public async Task<IActionResult> Index()
+        public IActionResult Index()
         {
-            var currentUserId = _userManager.GetUserId(User);
-            var userListings = await _context.GpuListings
-                                             .Where(l => l.ProviderId == currentUserId)
-                                             .OrderByDescending(l => l.CreatedAt)
-                                             .ToListAsync();
-            return View(userListings);
+            // Anyone who lands here is a Provider. Redirect them to their main dashboard.
+            return RedirectToAction("Index", "Dashboard");
         }
 
         // GET: /Listings/Create
@@ -75,7 +71,7 @@ namespace GPURental.Controllers
                     CpuModel = model.CpuModel,
                     OperatingSystem = model.OperatingSystem,
                     Location = model.Location,
-                    PricePerHourInCents = model.PricePerHourInCents,
+                    PricePerHourInINR = model.PricePerHourInINR,
                     Status = GpuStatus.Draft,
                     CreatedAt = DateTime.UtcNow,
                     ImagePath = uniqueFileName
@@ -115,7 +111,7 @@ namespace GPURental.Controllers
                 DiskInGB = listing.DiskInGB,
                 OperatingSystem = listing.OperatingSystem,
                 Location = listing.Location,
-                PricePerHourInCents = listing.PricePerHourInCents,
+                PricePerHourInINR = listing.PricePerHourInINR,
                 ExistingImagePath = listing.ImagePath
             };
 
@@ -148,7 +144,7 @@ namespace GPURental.Controllers
             listing.DiskInGB = model.DiskInGB;
             listing.OperatingSystem = model.OperatingSystem;
             listing.Location = model.Location;
-            listing.PricePerHourInCents = model.PricePerHourInCents;
+            listing.PricePerHourInINR = model.PricePerHourInINR;
 
             if (model.Image != null)
             {

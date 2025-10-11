@@ -1,52 +1,114 @@
 ﻿@model RentalJob
 @{
-    ViewData["Title"] = "Active Job Status";
-    // Calculate current duration
-    var duration = DateTime.UtcNow - Model.ActualStartAt.Value;
+    ViewData["Title"] = "Job Status";
 }
 
-<h1>@ViewData["Title"]</h1>
-<h4>You are currently renting: @Model.GpuListing.Title</h4>
-<hr />
+<div class="job-status-container">
+    <header class="job-header">
+        <h1>Active Job Status</h1>
+        @if(Model.Status == JobStatus.Running)
+        {
+            <form asp-action="Stop" asp-controller="Rental" method="post">
+                <input type="hidden" name="rentalJobId" value="@Model.RentalJobId" />
+                <button type="submit" class="stop-job-btn">Stop Job</button>
+            </form>
+        }
+    </header>
 
-<div class="row">
-    <div class="col-md-6">
-        <div class="card">
-            <div class="card-header">
-                Job Details
+    <section class="content-grid">
+        <div class="card job-details">
+            <h2>Job Details</h2>
+            <div class="detail-item">
+                <span class="detail-label">Status:</span>
+                @{
+                    var statusClass = Model.Status == JobStatus.Running ? "status-badge" : "status-badge status-badge-inactive";
+                }
+                <span class="detail-value @statusClass">@Model.Status</span>
             </div>
-            <div class="card-body">
-                <p><strong>Job ID:</strong> @Model.RentalJobId</p>
-                <p><strong>Start Time:</strong> @Model.ActualStartAt.Value.ToShortTimeString() on @Model.ActualStartAt.Value.ToShortDateString()</p>
-                <p><strong>Current Duration:</strong> @duration.Hours hours, @duration.Minutes minutes, @duration.Seconds seconds</p>
+            <div class="detail-item">
+                <span class="detail-label">Listing:</span>
+                <span class="detail-value">@Model.GpuListing.Title</span>
+            </div>
+            <div class="detail-item">
+                <span class="detail-label">Job ID:</span>
+                <span class="detail-value">
+                    <span class="job-id">@Model.RentalJobId</span>
+                </span>
+            </div>
+             <div class="detail-item">
+                <span class="detail-label">Start Time (UTC):</span>
+                <span class="detail-value">@(Model.ActualStartAt.HasValue ? Model.ActualStartAt.Value.ToString("g") : "N/A")</span>
+            </div>
+            <div class="detail-item">
+                <span class="detail-label">Duration:</span>
+                <span id="durationDisplay" class="detail-value font-weight-bold">--</span>
+            </div>
+        </div>
 
-                <h4 class="text-success">Status: @Model.Status</h4>
-            </div>
-            <div class="card-footer">
-                @if (Model.Status == JobStatus.Running)
+        <div class="card console">
+            <h2>Dummy Console</h2>
+            <div id="consoleOutput" class="console-output">
+                @if(Model.Status == JobStatus.Running)
                 {
-                    <form asp-action="Stop" asp-controller="Rental" method="post">
-                        <input type="hidden" name="rentalJobId" value="@Model.RentalJobId" />
-                        <button type="submit" class="btn btn-danger">Stop Job</button>
-                    </form>
+                    <pre><span class="prompt">></span> Connecting to instance...</pre>
+                    <pre><span class="prompt">></span> Connection successful.</pre>
                 }
                 else
                 {
-                    <p>This job has been completed.</p>
+                    <pre><span class="prompt">></span> Session disconnected.</pre>
                 }
             </div>
         </div>
-    </div>
-    <div class="col-md-6">
-        @* This is a good place for a dummy console or telemetry in the future *@
-        <div class="card">
-            <div class="card-header">
-                Dummy Console
-            </div>
-            <div class="card-body bg-dark text-light" style="height: 200px; overflow-y: scroll;">
-                <p class="text-white-50">> Connecting to instance...</p>
-                <p class="text-white-50">> Connection successful.</p>
-            </div>
-        </div>
-    </div>
+    </section>
 </div>
+
+
+@section Scripts {
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const durationDisplay = document.getElementById('durationDisplay');
+
+            // --- C# RAZOR BLOCK to conditionally render the correct JavaScript ---
+            @if (Model.Status == JobStatus.Running && Model.ActualStartAt.HasValue)
+            {
+                // This JS block is ONLY rendered if the job is running.
+                <text>
+                    const startTime = new Date('@Model.ActualStartAt.Value.ToString("o")Z');
+
+                    function updateTimer() {
+                        const now = new Date();
+                        const difference = now - startTime;
+                        const hours = Math.floor(difference / 3600000);
+                        const minutes = Math.floor((difference % 3600000) / 60000);
+                        const seconds = Math.floor((difference % 60000) / 1000);
+                        durationDisplay.textContent = `${hours} h, ${minutes} m, ${seconds} s`;
+                    }
+                    setInterval(updateTimer, 1000);
+                    updateTimer(); // Run once immediately
+                </text>
+            }
+            else if (Model.Status == JobStatus.Completed && Model.ActualStartAt.HasValue && Model.ActualEndAt.HasValue)
+            {
+                // This JS block is ONLY rendered if the job is completed and has both dates.
+                <text>
+                    const startTime = new Date('@Model.ActualStartAt.Value.ToString("o")Z');
+                    const endTime = new Date('@Model.ActualEndAt.Value.ToString("o")Z');
+                    const finalDifference = endTime - startTime;
+                    
+                    const finalHours = Math.floor(finalDifference / 3600000);
+                    const finalMinutes = Math.floor((finalDifference % 3600000) / 60000);
+                    
+                    durationDisplay.textContent = `${finalHours} h, ${finalMinutes} m (Final)`;
+                </text>
+            }
+            else
+            {
+                // This is the safe fallback for any other case (Failed, Cancelled, or invalid data).
+                <text>
+                    durationDisplay.textContent = "N/A";
+                </text>
+            }
+            
+        });
+    </script>
+}

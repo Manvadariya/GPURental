@@ -5,7 +5,7 @@ namespace GPURental.ViewModels
 {
     public class WalletDashboardViewModel
     {
-        public int CurrentBalanceInCents { get; set; }
+        public decimal CurrentBalanceInINR { get; set; }
         public IEnumerable<WalletLedgerEntry> TransactionHistory { get; set; }
     }
 }

@@ -3,78 +3,99 @@
     ViewData["Title"] = Model.Listing.Title;
 }
 
-<h1>@Model.Listing.Title</h1>
-<h4>Provided by: @Model.ProviderName</h4>
-<hr />
+<div class="details-container">
+    <div class="card details-main-card">
+        <div class="row no-gutters">
+            <!-- Left Column: Details & Image -->
+            <div class="col-lg-7">
+                <div class="p-4">
+                    <h1 class="details-title">@Model.Listing.Title</h1>
+                    <p class="details-subtitle">
+                        Provided by: <span class="font-weight-bold text-dark">@Model.ProviderName</span>
+                    </p>
+                    <div class="mt-3">
+                        <span class="text-muted"><i data-lucide="map-pin" class="icon-sm"></i> @Model.Listing.Location</span>
+                    </div>
 
-<div class="row">
-    <!-- Image Gallery Column -->
-    <div class="col-md-7">
-        @{
-            var primaryImageUrl = !string.IsNullOrEmpty(Model.Listing.ImagePath)
-            ? $"/images/listings/{Model.Listing.ImagePath}"
-            : "/images/placeholder.png";
-        }
-        <img src="@primaryImageUrl" class="img-fluid rounded" alt="Main image">
-    </div>
-
-    <!-- Details & Renting Column -->
-    <div class="col-md-5">
-        <div class="card">
-            <div class="card-body">
-                <h3 class="card-title text-primary">$@((Model.Listing.PricePerHourInCents / 100.0m).ToString("F2")) <span class="h5 text-muted">/ hour</span></h3>
-                <p>This listing is available for on-demand rental.</p>
-                <form asp-controller="Rental" asp-action="Create" method="post">
-                    <input type="hidden" name="listingId" value="@Model.Listing.ListingId" />
-                    <button type="submit" class="btn btn-success btn-lg btn-block">Rent Now</button>
-                </form>
-            </div>
-            <ul class="list-group list-group-flush">
-                <li class="list-group-item"><strong>GPU:</strong> @Model.Listing.GpuModel</li>
-                <li class="list-group-item"><strong>VRAM:</strong> @Model.Listing.VramInGB GB</li>
-                <li class="list-group-item"><strong>System RAM:</strong> @Model.Listing.RamInGB GB</li>
-                <li class="list-group-item"><strong>CPU:</strong> @Model.Listing.CpuModel</li>
-                <li class="list-group-item"><strong>Storage:</strong> @Model.Listing.DiskInGB GB SSD</li>
-                <li class="list-group-item"><strong>OS:</strong> @Model.Listing.OperatingSystem</li>
-                <li class="list-group-item"><strong>Location:</strong> @Model.Listing.Location</li>
-            </ul>
-        </div>
-    </div>
-</div>
-
-<div class="row mt-5">
-    <div class="col">
-        <h3>Reviews (@Model.Reviews.Count())</h3>
-        <hr />
-        @if (Model.Reviews.Any())
-        {
-            @foreach (var review in Model.Reviews)
-            {
-                <div class="card mb-3">
-                    <div class="card-body">
-                        <h5 class="card-title">
-                            @for (int i = 0; i < review.Rating; i++)
-                            {
-                                <span class="text-warning">&#9733;</span>
-                                // Star character
-                            }
-                            @for (int i = review.Rating; i < 5; i++)
-                            {
-                                <span class="text-muted">&#9734;</span>
-                                // Empty star character
-                            }
-                        </h5>
-                        <p class="card-text">@review.Comment</p>
-                        <footer class="blockquote-footer">
-                            Reviewed by @review.Author.FullName on @review.CreatedAt.ToShortDateString()
-                        </footer>
+                    <div class="details-image-box mt-4">
+                        @{
+                            var imageUrl = !string.IsNullOrEmpty(Model.Listing.ImagePath)
+                            ? $"/images/listings/{Model.Listing.ImagePath}"
+                            : "/images/placeholder.png";
+                        }
+                        <img src="@imageUrl" alt="@Model.Listing.Title" class="details-main-image" />
                     </div>
                 </div>
+            </div>
+
+            <!-- Right Column: Pricing & Specs (FULLY IMPLEMENTED) -->
+            <div class="col-lg-5">
+                <div class="p-4 h-100 d-flex flex-column">
+                    <div class="details-pricing-card">
+                        <p class="details-price">
+                            ₹@Model.Listing.PricePerHourInINR.ToString("F2")
+                        </p>
+                        <p class="text-muted mb-4">per hour</p>
+                        <form asp-action="Create" asp-controller="Rental" method="post">
+                            <input type="hidden" name="listingId" value="@Model.Listing.ListingId" />
+                            <button type="submit" class="btn btn-block btn-lg details-rent-btn">
+                                Rent Now
+                            </button>
+                        </form>
+                    </div>
+
+                    <div class="mt-4">
+                        <h3 class="specs-header">Technical Specifications</h3>
+                        <ul class="list-unstyled specs-list">
+                            <li><span>Graphics Card:</span> <strong>@Model.Listing.GpuModel</strong></li>
+                            <li><span>Video Memory:</span> <strong>@Model.Listing.VramInGB GB</strong></li>
+                            <li><span>System RAM:</span> <strong>@Model.Listing.RamInGB GB</strong></li>
+                            <li><span>Processor:</span> <strong>@Model.Listing.CpuModel</strong></li>
+                            <li><span>Storage:</span> <strong>@Model.Listing.DiskInGB GB SSD</strong></li>
+                            <li><span>Operating System:</span> <strong>@Model.Listing.OperatingSystem</strong></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Reviews Section (Full code included) -->
+    <div class="mt-5">
+        <h3 class="section-header">Reviews (@Model.Reviews.Count())</h3>
+        <hr />
+        <div class="space-y-4">
+            @if (Model.Reviews.Any())
+            {
+                @foreach (var review in Model.Reviews)
+                {
+                    <div class="review-card">
+                        <div class="d-flex align-items-start">
+                            <div>
+                                <p class="font-weight-bold mb-0">@review.Author.FullName</p>
+                                <div class="d-flex align-items-center">
+                                    <div class="review-stars">
+                                        @for (int i = 0; i < review.Rating; i++)
+                                        {
+                                            <span>&#9733;</span>
+                                        }
+                                        @for (int i = review.Rating; i < 5; i++)
+                                        {
+                                            <span class="text-muted">&#9733;</span>
+                                        }
+                                    </div>
+                                    <small class="text-muted ml-2">@review.CreatedAt.ToShortDateString()</small>
+                                </div>
+                            </div>
+                        </div>
+                        <p class="review-comment mt-3">@review.Comment</p>
+                    </div>
+                }
             }
-        }
-        else
-        {
-            <p>This listing has no reviews yet.</p>
-        }
+            else
+            {
+                <p>This listing has no reviews yet.</p>
+            }
+        </div>
     </div>
 </div>

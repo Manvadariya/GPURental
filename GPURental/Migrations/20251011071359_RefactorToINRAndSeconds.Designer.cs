@@ -4,14 +4,16 @@ using GPURental.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace GPURental.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251011071359_RefactorToINRAndSeconds")]
+    partial class RefactorToINRAndSeconds
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -82,7 +84,7 @@ namespace GPURental.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<decimal>("PricePerHourInINR")
-                        .HasColumnType("decimal(18, 2)");
+                        .HasColumnType("decimal(18,2)");
 
                     b.Property<string>("ProviderId")
                         .IsRequired()
@@ -120,7 +122,7 @@ namespace GPURental.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<decimal?>("FinalChargeInINR")
-                        .HasColumnType("decimal(18, 2)");
+                        .HasColumnType("decimal(18,2)");
 
                     b.Property<string>("ListingId")
                         .IsRequired()
@@ -189,7 +191,7 @@ namespace GPURental.Migrations
                         .HasColumnType("int");
 
                     b.Property<decimal>("BalanceInINR")
-                        .HasColumnType("decimal(18, 2)");
+                        .HasColumnType("decimal(18,2)");
 
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
@@ -263,7 +265,7 @@ namespace GPURental.Migrations
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<decimal>("AmountInINR")
-                        .HasColumnType("decimal(18, 2)");
+                        .HasColumnType("decimal(18,2)");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
@@ -320,21 +322,21 @@ namespace GPURental.Migrations
                         new
                         {
                             Id = "a18be9c0-aa65-4af8-bd17-00bd9344e575",
-                            ConcurrencyStamp = "e58f0fbd-4aaa-4aad-a97a-d31f4fe8b5bf",
+                            ConcurrencyStamp = "eb7bdfbf-41a9-4740-ad91-768abe365681",
                             Name = "Admin",
                             NormalizedName = "ADMIN"
                         },
                         new
                         {
                             Id = "a18be9c0-aa65-4af8-bd17-00bd9344e576",
-                            ConcurrencyStamp = "2a57d44c-a586-4145-be37-f2ef8a31e15d",
+                            ConcurrencyStamp = "7e79a2d5-d835-46ae-951f-8d8349776b71",
                             Name = "Provider",
                             NormalizedName = "PROVIDER"
                         },
                         new
                         {
                             Id = "a18be9c0-aa65-4af8-bd17-00bd9344e577",
-                            ConcurrencyStamp = "828d0519-d1f5-4b78-91b4-56b462601466",
+                            ConcurrencyStamp = "6b80e6e9-cfa8-4111-a2e0-6b0b4619020a",
                             Name = "Renter",
                             NormalizedName = "RENTER"
                         });

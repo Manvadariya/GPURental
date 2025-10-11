@@ -1,31 +1,43 @@
 ﻿@model LoginViewModel
 @{
-    ViewData["Title"] = "Log in";
+    ViewData["Title"] = "Log In";
+    Layout = "~/Views/Shared/_Layout.cshtml"; // Ensure it uses the main layout
 }
 
-<h1>@ViewData["Title"]</h1>
-<div class="row">
-    <div class="col-md-4">
-        <section>
-            <form asp-action="Login" method="post">
-                <h4>Use a local account to log in.</h4>
-                <hr />
-                <div asp-validation-summary="All" class="text-danger"></div>
-                <div class="form-group">
-                    <label asp-for="Email"></label>
-                    <input asp-for="Email" class="form-control" />
-                    <span asp-validation-for="Email" class="text-danger"></span>
-                </div>
-                <div class="form-group">
-                    <label asp-for="Password"></label>
-                    <input asp-for="Password" class="form-control" />
-                    <span asp-validation-for="Password" class="text-danger"></span>
-                </div>
-                <div class="form-group">
-                    <button type="submit" class="btn btn-primary">Log in</button>
-                </div>
-            </form>
-        </section>
+<!-- We add a specific class to the body from the view using a small script -->
+<script>document.body.classList.add('login-page-background');</script>
+
+<div class="login-container">
+    <div class="login-card shadow-lg">
+        <div class="text-center">
+            <h1 class="h3 font-weight-bold mb-2">Log In</h1>
+            <p class="text-muted">Access your account</p>
+        </div>
+
+        <form class="mt-4" asp-action="Login" method="post">
+            <div asp-validation-summary="All" class="text-danger"></div>
+
+            <div class="form-group">
+                <label asp-for="Email" class="login-label">Email</label>
+                <input asp-for="Email" class="form-control login-input" required />
+                <span asp-validation-for="Email" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="Password" class="login-label">Password</label>
+                <input asp-for="Password" class="form-control login-input" required />
+                <span asp-validation-for="Password" class="text-danger"></span>
+            </div>
+
+            <button type="submit" class="btn btn-primary btn-block glow-accent mt-4">
+                Log In
+            </button>
+
+            <div class="text-center text-muted small mt-3">
+                Need an account?
+                <a asp-action="Register" class="font-weight-bold">Register now</a>
+            </div>
+        </form>
     </div>
 </div>
 

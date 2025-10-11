@@ -7,41 +7,36 @@
 <ul class="navbar-nav">
     @if (SignInManager.IsSignedIn(User))
     {
-        @if (User.IsInRole("Admin"))
-        {
-            <li class="nav-item">
-                <a class="nav-link text-info" asp-controller="Dashboard" asp-action="Index">Admin Dashboard</a>
-            </li>
-        }
-        @if (User.IsInRole("Provider"))
-        {
-            <li class="nav-item">
-                <a class="nav-link text-dark" asp-controller="Dashboard" asp-action="Index">Provider Dashboard</a>
-            </li>
-        }
-        @if (User.IsInRole("Renter"))
-        {
-            <li class="nav-item">
-                <a class="nav-link text-dark" asp-controller="Dashboard" asp-action="Index">My Dashboard</a>
-            </li>
-        }
-
         <li class="nav-item">
-            <a class="nav-link text-dark" asp-controller="Account" asp-action="Manage" title="Manage">Hello @UserManager.GetUserName(User)!</a>
+            <a class="nav-link" asp-controller="Marketplace" asp-action="Index">Marketplace</a>
         </li>
-        <li class="nav-item">
-            <form class="form-inline" asp-controller="Account" asp-action="Logout" method="post">
-                <button type="submit" class="nav-link btn btn-link text-dark">Logout</button>
-            </form>
+        <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                Hello, @UserManager.GetUserName(User)
+            </a>
+            <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                <a class="dropdown-item" asp-controller="Dashboard" asp-action="Index">Dashboard</a>
+                <a class="dropdown-item" asp-controller="Account" asp-action="Manage">Manage Account</a>
+                <div class="dropdown-divider"></div>
+                <form class="form-inline" asp-controller="Account" asp-action="Logout" method="post">
+                    <button type="submit" class="dropdown-item">Logout</button>
+                </form>
+            </div>
         </li>
     }
     else
     {
         <li class="nav-item">
-            <a class="nav-link text-dark" asp-controller="Account" asp-action="Register">Register</a>
+            <a class="nav-link" asp-controller="Marketplace" asp-action="Index">Marketplace</a>
         </li>
         <li class="nav-item">
-            <a class="nav-link text-dark" asp-controller="Account" asp-action="Login">Login</a>
+            <a class="nav-link" asp-controller="Pricing" asp-action="Index">Calculator</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" asp-controller="Account" asp-action="Register">Register</a>
+        </li>
+        <li class="nav-item">
+            <a class="btn btn-primary ml-2" asp-controller="Account" asp-action="Login">Log In</a>
         </li>
     }
 </ul>

@@ -104,5 +104,24 @@ namespace GPURental.Controllers
             ViewData["ListingTitle"] = jobForTitle?.GpuListing.Title ?? "Unknown Listing";
             return View(model);
         }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Withdraw(string id)
+        {
+            var userId = _userManager.GetUserId(User);
+            var dispute = await _context.Disputes.FindAsync(id);
+
+            if (dispute == null || dispute.RaisedByUserId != userId || dispute.Status != DisputeStatus.Submitted)
+            {
+                TempData["ErrorMessage"] = "This dispute cannot be withdrawn.";
+                return RedirectToAction("Index", "Dashboard");
+            }
+
+            _context.Disputes.Remove(dispute);
+            await _context.SaveChangesAsync();
+            TempData["SuccessMessage"] = "Your dispute has been withdrawn.";
+
+            return RedirectToAction("Index", "Dashboard");
+        }
     }
 }

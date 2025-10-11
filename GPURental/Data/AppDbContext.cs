@@ -81,6 +81,22 @@ namespace GPURental.Data
                 .WithOne(d => d.RentalJob)
                 .HasForeignKey<Dispute>(d => d.RentalJobId);
 
+            modelBuilder.Entity<User>()
+        .Property(u => u.BalanceInINR)
+        .HasColumnType("decimal(18, 2)");
+
+            modelBuilder.Entity<GpuListing>()
+                .Property(l => l.PricePerHourInINR)
+                .HasColumnType("decimal(18, 2)");
+
+            modelBuilder.Entity<RentalJob>()
+                .Property(j => j.FinalChargeInINR)
+                .HasColumnType("decimal(18, 2)");
+
+            modelBuilder.Entity<WalletLedgerEntry>()
+                .Property(e => e.AmountInINR)
+                .HasColumnType("decimal(18, 2)");
+
             // THE ROLES
             const string ADMIN_ROLE_ID = "a18be9c0-aa65-4af8-bd17-00bd9344e575";
             const string PROVIDER_ROLE_ID = "a18be9c0-aa65-4af8-bd17-00bd9344e576";

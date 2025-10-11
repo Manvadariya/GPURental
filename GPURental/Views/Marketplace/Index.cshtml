@@ -3,87 +3,107 @@
     ViewData["Title"] = "GPU Marketplace";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome to the Marketplace</h1>
-    <p>Find the perfect GPU for your next project.</p>
-</div>
+<div class="marketplace-container">
 
-<!-- AI-Powered Search Form -->
-<div class="card bg-light my-4">
-    <div class="card-body">
-        <h5>AI-Powered Search</h5>
-        <p class="text-muted">Describe your task and let AI find the right GPU for you.</p>
-        <form asp-action="AiSearch" asp-controller="Marketplace" method="get">
-            <div class="input-group">
-                <input type="text" name="userTask" class="form-control" placeholder="e.g., Train an 8 billion parameter LLM" required />
-                <div class="input-group-append">
-                    <button type="submit" class="btn btn-info">Find GPU</button>
-                </div>
-            </div>
-        </form>
+    <!-- === NEW HEADER SECTION === -->
+    <div class="marketplace-header text-center">
+        <h1 class="display-4 font-weight-bold">Welcome to the Marketplace</h1>
+        <p class="lead text-muted">Find the perfect GPU for your next project.</p>
     </div>
-</div>
+    <!-- ========================== -->
 
-<!-- Manual Filter Form -->
-<div class="card bg-light my-4">
-    <div class="card-body">
-        <form asp-action="Index" method="get">
-            <div class="form-row align-items-end">
-                <div class="form-group col-md-5">
-                    <label asp-for="GpuModelSearch">GPU Model</label>
-                    <input asp-for="GpuModelSearch" class="form-control" placeholder="e.g., RTX 3090" />
-                </div>
-                <div class="form-group col-md-5">
-                    <label asp-for="MinVramSearch">Minimum VRAM (GB)</label>
-                    <input asp-for="MinVramSearch" type="number" class="form-control" placeholder="e.g., 12" />
-                </div>
-                <div class="form-group col-md-2">
-                    <button type="submit" class="btn btn-primary btn-block">Search</button>
-                </div>
-            </div>
-        </form>
-    </div>
-</div>
-
-<hr />
-
-<!-- Listing Results -->
-<div class="row">
-    @if (Model.Listings.Any())
-    {
-        @foreach (var listing in Model.Listings)
-        {
-            <div class="col-md-4 mb-4">
-                <div class="card h-100">
-                    @{
-                        var imageUrl = !string.IsNullOrEmpty(listing.ImagePath)
-                        ? $"/images/listings/{listing.ImagePath}"
-                        : "/images/placeholder.png";
-                    }
-                    <img src="@imageUrl" class="card-img-top" alt="@listing.Title" style="height: 200px; object-fit: cover;">
-                    <div class="card-body d-flex flex-column">
-                        <h5 class="card-title">@listing.Title</h5>
-                        <p class="card-text">
-                            <strong>GPU:</strong> @listing.GpuModel <br />
-                            <strong>VRAM:</strong> @listing.VramInGB GB
-                        </p>
-                        <p class="card-text font-weight-bold">
-                            $@((listing.PricePerHourInCents / 100.0m).ToString("F2")) / hour
-                        </p>
-                        <div class="mt-auto">
-                            <a asp-action="Details" asp-controller="Marketplace" asp-route-id="@listing.ListingId" class="btn btn-primary">View Details</a>
-                        </div>
+    <div class="max-w-5xl mx-auto">
+        <!-- Unified Search Card -->
+        <div class="marketplace-search-card">
+            <!-- AI Search Form -->
+            <form asp-action="AiSearch" asp-controller="Marketplace" method="get">
+                <div class="input-group">
+                    <input type="text" name="userTask" class="form-control search-input" placeholder="Describe your task and let AI find the right GPU..." required />
+                    <div class="input-group-append">
+                        <button type="submit" class="btn btn-primary btn-gradient btn-icon">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
+                            AI Search
+                        </button>
                     </div>
                 </div>
-            </div>
-        }
-    }
-    else
-    {
-        <div class="col-12 text-center mt-5">
-            <h4>No GPUs Match Your Criteria</h4>
-            <p>Please try a different search. If you used the AI search, it's possible no currently available GPUs meet the requirements for your task.</p>
-            <p>Providers are adding new GPUs all the time, so please check back soon!</p>
+            </form>
+
+            <div class="search-divider"></div>
+
+            <!-- Manual Filter Form -->
+            <form asp-action="Index" method="get">
+                <div class="form-row align-items-end">
+                    <div class="form-group col-md-5">
+                        <label asp-for="GpuModelSearch" class="search-label">GPU Model</label>
+                        <input asp-for="GpuModelSearch" class="form-control search-input-sm" placeholder="e.g., RTX 4090" />
+                    </div>
+                    <div class="form-group col-md-5">
+                        <label asp-for="MinVramSearch" class="search-label">Minimum VRAM (GB)</label>
+                        <input asp-for="MinVramSearch" type="number" class="form-control search-input-sm" placeholder="e.g., 12" />
+                    </div>
+                    <div class="form-group col-md-2">
+                        <button type="submit" class="btn btn-secondary btn-block h-auto">Search</button>
+                    </div>
+                </div>
+            </form>
         </div>
-    }
+
+        <!-- Listing Results Grid -->
+        <div class="row mt-5">
+            @if (Model.Listings.Any())
+            {
+                @foreach (var listing in Model.Listings)
+                {
+                    <div class="col-md-6 col-lg-4 mb-4">
+                        <div class="gpu-listing-card">
+                            <div class="relative">
+                                @{
+                                    var imageUrl = !string.IsNullOrEmpty(listing.ImagePath)
+                                    ? $"/images/listings/{listing.ImagePath}"
+                                    : "/images/placeholder.png";
+                                }
+                                <img src="@imageUrl" alt="@listing.Title" class="gpu-card-image">
+                            </div>
+                            <div class="p-4 space-y-4">
+                                <div class="gpu-card-header">
+                                    <h2 class="gpu-card-title">@listing.Title</h2>
+                                    <div class="text-right flex-shrink-0">
+                                        <div class="gpu-card-price">₹@listing.PricePerHourInINR.ToString("F2")</div>
+                                        <div class="gpu-card-price-label">/hour</div>
+                                    </div>
+                                </div>
+                                <div class="gpu-card-specs">
+                                    <div class="spec-item">
+                                        <i data-lucide="cpu" class="spec-icon"></i>
+                                        <div>
+                                            <p class="spec-label">GPU</p>
+                                            <p class="spec-value">@listing.GpuModel</p>
+                                        </div>
+                                    </div>
+                                    <div class="spec-item">
+                                        <i data-lucide="memory-stick" class="spec-icon"></i>
+                                        <div>
+                                            <p class="spec-label">VRAM</p>
+                                            <p class="spec-value">@listing.VramInGB GB</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <a asp-action="Details" asp-controller="Marketplace" asp-route-id="@listing.ListingId" class="btn btn-primary btn-gradient btn-block btn-icon">
+                                    <i data-lucide="eye" class="h-5 w-5"></i>
+                                    <span>View Details</span>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                }
+            }
+            else
+            {
+                <div class="col-12 text-center mt-5">
+                    <h4>No GPUs Match Your Criteria</h4>
+                    <p>Please try a different search or check back soon!</p>
+                </div>
+            }
+        </div>
+    </div>
 </div>

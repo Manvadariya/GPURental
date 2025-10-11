@@ -9,7 +9,7 @@ namespace GPURental.Models
     {
         // IdentityUser provides: Id (string), UserName, Email, PasswordHash
         public string FullName { get; set; }
-        public int BalanceInCents { get; set; }
+        public decimal BalanceInINR { get; set; }
         public string Timezone { get; set; }
         public DateTime CreatedAt { get; set; }
 

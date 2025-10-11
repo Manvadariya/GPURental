@@ -3,59 +3,83 @@
     ViewData["Title"] = "Resolve Dispute";
 }
 
-<h1>@ViewData["Title"]</h1>
-<h4>Dispute ID: @Model.DisputeId</h4>
-<hr />
-
-<div class="row">
-    <div class="col-md-7">
-        <h3>Dispute Details</h3>
-        <dl class="row">
-            <dt class="col-sm-4">Date Raised</dt>
-            <dd class="col-sm-8">@Model.CreatedAt</dd>
-
-            <dt class="col-sm-4">Raised By</dt>
-            <dd class="col-sm-8">@Model.RaisedByUser.Email</dd>
-
-            <dt class="col-sm-4">Reason</dt>
-            <dd class="col-sm-8">@Model.Reason</dd>
-
-            <dt class="col-sm-4">Description</dt>
-            <dd class="col-sm-8"><p>@Model.Description</p></dd>
-        </dl>
-
-        <h3>Related Job Details</h3>
-        <dl class="row">
-            <dt class="col-sm-4">Job ID</dt>
-            <dd class="col-sm-8">@Model.RentalJob.RentalJobId</dd>
-
-            <dt class="col-sm-4">Listing</dt>
-            <dd class="col-sm-8">@Model.RentalJob.GpuListing.Title</dd>
-
-            <dt class="col-sm-4">Provider</dt>
-            <dd class="col-sm-8">@Model.RentalJob.GpuListing.Provider.Email</dd>
-
-            <dt class="col-sm-4">Final Charge</dt>
-            <dd class="col-sm-8">$@((Model.RentalJob.FinalChargeInCents / 100.0m)?.ToString("F2"))</dd>
-        </dl>
+<div class="dispute-container">
+    <div class="mb-4">
+        <h1 class="admin-header">@ViewData["Title"]</h1>
+        <p class="text-muted">
+            Dispute ID: @Model.DisputeId
+        </p>
     </div>
+    <hr />
 
-    <div class="col-md-5">
-        <div class="card bg-light">
-            <div class="card-body">
-                <h4 class="card-title">Take Action</h4>
+    <div class="row mt-4">
+        <!-- Left Column: Details -->
+        <div class="col-lg-8">
+            <div class="admin-table-card mb-4 p-4">
+                <h2 class="section-header-sm">Dispute Details</h2>
+                <div class="row">
+                    <div class="col-md-6 detail-item">
+                        <p class="detail-label">Date Raised</p>
+                        <p class="detail-value">@Model.CreatedAt</p>
+                    </div>
+                    <div class="col-md-6 detail-item">
+                        <p class="detail-label">Raised By</p>
+                        <p class="detail-value">@Model.RaisedByUser.Email</p>
+                    </div>
+                    <div class="col-md-6 detail-item">
+                        <p class="detail-label">Reason</p>
+                        <p class="detail-value">@Model.Reason</p>
+                    </div>
+                    <div class="col-md-6 detail-item">
+                        <p class="detail-label">Description</p>
+                        <p class="detail-value">@Model.Description</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="admin-table-card p-4">
+                <h2 class="section-header-sm">Related Job Details</h2>
+                <div class="row">
+                    <div class="col-md-6 detail-item">
+                        <p class="detail-label">Job ID</p>
+                        <p class="detail-value break-word">@Model.RentalJob.RentalJobId</p>
+                    </div>
+                    <div class="col-md-6 detail-item">
+                        <p class="detail-label">Listing</p>
+                        <p class="detail-value">@Model.RentalJob.GpuListing.Title</p>
+                    </div>
+                    <div class="col-md-6 detail-item">
+                        <p class="detail-label">Provider</p>
+                        <p class="detail-value">@Model.RentalJob.GpuListing.Provider.Email</p>
+                    </div>
+                    <div class="col-md-6 detail-item">
+                        <p class="detail-label">Final Charge</p>
+                        <p class="detail-value font-weight-bold">₹@((Model.RentalJob.FinalChargeInINR)?.ToString("F2"))</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Column: Actions -->
+        <div class="col-lg-4">
+            <div class="admin-table-card p-4 sticky-top">
+                <h2 class="section-header-sm">Take Action</h2>
                 <form asp-action="ResolveDispute" method="post">
                     <input type="hidden" name="disputeId" value="@Model.DisputeId" />
 
                     <div class="form-group">
-                        <label for="refundAmount">Refund Amount (USD)</label>
-                        <input type="number" id="refundAmount" name="refundAmount" class="form-control" step="0.01" min="0" value="0.00" />
-                        <small class="form-text text-muted">Enter 0 for no refund. The amount will be transferred from the provider to the renter.</small>
+                        <label for="refundAmount" class="detail-label">Refund Amount (INR)</label>
+                        <input type="number" id="refundAmount" name="refundAmount" class="form-control login-input" step="0.01" min="0" value="0.00" required />
+                        <small class="text-muted mt-2 d-block">Enter 0 for no refund. The amount will be transferred from the provider to the renter.</small>
                     </div>
-                    <hr />
-                    <div class="form-group">
-                        <button type="submit" name="resolution" value="approve" class="btn btn-success">Approve Refund & Resolve</button>
-                        <button type="submit" name="resolution" value="reject" class="btn btn-danger mt-2">Reject Claim</button>
+
+                    <div class="mt-4">
+                        <button type="submit" name="resolution" value="approve" class="btn btn-success btn-block action-btn">
+                            Approve Refund & Resolve
+                        </button>
+                        <button type="submit" name="resolution" value="reject" class="btn btn-danger btn-block mt-3 action-btn">
+                            Reject Claim
+                        </button>
                     </div>
                 </form>
             </div>

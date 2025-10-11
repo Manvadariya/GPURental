@@ -29,7 +29,7 @@ namespace GPURental.Models
         public DateTime? ActualStartAt { get; set; }
         public DateTime? ActualEndAt { get; set; }
         public JobStatus Status { get; set; }
-        public int? FinalChargeInCents { get; set; }
+        public decimal? FinalChargeInINR { get; set; }
 
         // Navigation Properties
         public Review Review { get; set; }

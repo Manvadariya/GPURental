@@ -37,7 +37,7 @@ namespace GPURental.Controllers
                     Email = model.Email,
                     FullName = model.FullName,
                     CreatedAt = DateTime.UtcNow,
-                    BalanceInCents = 0,
+                    BalanceInINR = 0,
                     Timezone = model.Timezone
                 };
 
@@ -57,7 +57,7 @@ namespace GPURental.Controllers
                     }
 
                     await _signInManager.SignInAsync(user, isPersistent: false);
-                    return RedirectToAction("Index", "Home");
+                    return RedirectToAction("Index", "Marketplace");
                 }
 
                 foreach (var error in result.Errors)
@@ -82,7 +82,7 @@ namespace GPURental.Controllers
                 var result = await _signInManager.PasswordSignInAsync(model.Email, model.Password, isPersistent: false, lockoutOnFailure: false);
                 if (result.Succeeded)
                 {
-                    return RedirectToAction("Index", "Home");
+                    return RedirectToAction("Index", "Marketplace");
                 }
                 ModelState.AddModelError(string.Empty, "Invalid login attempt.");
             }

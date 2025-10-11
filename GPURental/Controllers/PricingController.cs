@@ -48,20 +48,16 @@ namespace GPURental.Controllers
                 return View(model);
             }
 
-            if (!string.IsNullOrEmpty(model.SelectedGpuModel) && model.Minutes > 0)
+            if (!string.IsNullOrEmpty(model.SelectedGpuModel) && model.Seconds > 0)
             {
-                var averagePricePerHourInCents = await _context.GpuListings
-                    .Where(l => l.GpuModel == model.SelectedGpuModel && l.Status == Models.GpuStatus.Published)
-                    .AverageAsync(l => (double?)l.PricePerHourInCents) ?? 0;
+                var averagePricePerHour = await _context.GpuListings
+                    .Where(l => l.GpuModel == model.SelectedGpuModel)
+                    .AverageAsync(l => (decimal?)l.PricePerHourInINR) ?? 0;
 
-                if (averagePricePerHourInCents > 0)
+                if (averagePricePerHour > 0)
                 {
-                    decimal averagePricePerMinuteInCents = (decimal)averagePricePerHourInCents / 60.0m;
-
-                    decimal totalCostInCents = averagePricePerMinuteInCents * model.Minutes;
-
-                    model.EstimatedCost = totalCostInCents / 100.0m;
-
+                    decimal pricePerSecond = averagePricePerHour / 3600.0m;
+                    model.EstimatedCost = pricePerSecond * model.Seconds;
                     model.CalculationSuccess = true;
                 }
             }

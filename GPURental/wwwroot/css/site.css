@@ -1,71 +1,1088 @@
-﻿/* Please see documentation at https://docs.microsoft.com/aspnet/core/client-side/bundling-and-minification
-for details on configuring this project to bundle and minify static web assets. */
+﻿/* === FINAL HOMEPAGE STYLES V3 (Full-Screen Hero) === */
 
-a.navbar-brand {
-  white-space: normal;
-  text-align: center;
-  word-break: break-all;
+/* --- Import Google Font (Optional but Recommended) --- */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+/* --- Apply Font to Homepage Elements --- */
+.hero-section-fullscreen, .how-it-works-section {
+    font-family: 'Inter', sans-serif;
 }
 
-/* Provide sufficient contrast against white background */
-a {
-  color: #0366d6;
+/* --- Hero Section --- */
+.hero-section-fullscreen {
+    /* Sizing and Alignment */
+    min-height: 100vh; /* Make the section at least the full height of the viewport */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 3rem 1.5rem;
+
+    /* Colors and Background */
+    background-color: #ffffff; /* White background */
+    color: #212529; /* Dark text color */
 }
 
-.btn-primary {
-  color: #fff;
-  background-color: #1b6ec2;
-  border-color: #1861ac;
+.hero-section-fullscreen .lead {
+    font-size: 1.25rem;
+    font-weight: 300;
+    max-width: 700px;
+    margin-left: auto;
+    margin-right: auto;
+    color: #6c757d; /* Muted grey text */
 }
 
-.nav-pills .nav-link.active, .nav-pills .show > .nav-link {
-  color: #fff;
-  background-color: #1b6ec2;
-  border-color: #1861ac;
+.hero-section-fullscreen .hero-accent-text {
+    color: #008167; /* Your primary green color */
 }
 
-/* Sticky footer styles
--------------------------------------------------- */
-html {
-  font-size: 14px;
+/* --- How It Works Section --- */
+.how-it-works-section {
+    background-color: #f8f9fa; /* Light grey background */
+    padding-top: 100px;
+    padding-bottom: 100px;
+    border-top: 1px solid #dee2e6;
 }
-@media (min-width: 768px) {
-  html {
+
+.how-it-works-card {
+    border: 1px solid #e9ecef;
+    border-radius: 0.75rem;
+    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+
+.how-it-works-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 .8rem 1.5rem rgba(0,0,0,.1);
+}
+
+.step {
+    display: flex;
+    align-items: flex-start;
+    margin-bottom: 1.75rem;
+}
+
+.step-number-renter,
+.step-number-provider {
+    flex-shrink: 0;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    color: white;
+    font-size: 1.2rem;
+    font-weight: 700;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 1rem;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+
+.step-number-renter {
+    background-color: #17a2b8; /* Bootstrap 'info' blue */
+}
+
+.step-number-provider {
+    background-color: #008167; /* Your primary green */
+}
+
+.step-content h5 {
+    font-weight: 600;
+    margin-bottom: 0.25rem;
+    color: #343a40;
+}
+
+/* === CUSTOM LOGIN PAGE STYLES === */
+
+/* --- Page Background and Centering Container --- */
+.login-page-background {
+    /* Uses a very light grey from the Bootstrap palette */
+    background-color: #f8f9fa;
+    font-family: 'Inter', sans-serif; /* Assumes Inter font is loaded in _Layout.cshtml */
+}
+
+.login-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 80vh; /* Takes up most of the vertical space */
+}
+
+/* --- The Login Card --- */
+.login-card {
+    max-width: 420px;
+    width: 100%;
+    background-color: rgba(255, 255, 255, 0.7); /* Semi-transparent white */
+    backdrop-filter: blur(10px); /* Frosted glass effect */
+    border: 1px solid #dee2e6; /* Light border */
+    border-radius: 0.75rem;
+    padding: 2rem;
+}
+
+/* --- Form Elements --- */
+.login-label {
+    font-size: 0.875rem; /* 14px */
+    color: #6c757d; /* Muted text color */
+    font-weight: 500;
+}
+
+.login-input {
+    background-color: #f8f9fa; /* Match page background */
+    border: 1px solid #ced4da;
+    height: calc(1.5em + .75rem + 2px);
+    padding: 0.75rem 1rem;
+}
+
+    .login-input:focus {
+        background-color: #fff;
+        border-color: #008167; /* Your primary green color */
+        box-shadow: 0 0 0 0.2rem rgba(0, 129, 103, 0.25);
+    }
+
+/* --- Glow effect on the primary button --- */
+.glow-accent {
+    /* Re-using your primary green color */
+    box-shadow: 0 0 20px rgba(0, 129, 103, 0.3);
+    transition: all 0.3s ease;
+    font-weight: 600;
+}
+
+    .glow-accent:hover {
+        box-shadow: 0 0 30px rgba(0, 129, 103, 0.5);
+        transform: translateY(-2px);
+    }
+
+/* === MARKETPLACE UI REDESIGN V2 === */
+
+/* --- General Page Style --- */
+.marketplace-container {
+    font-family: 'Inter', sans-serif;
+}
+
+/* --- Search Card --- */
+.marketplace-search-card {
+    background-color: white;
+    padding: 1.5rem;
+    border-radius: 0.5rem;
+    border: 1px solid #e5e7eb; /* gray-200 */
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05);
+}
+
+.search-input {
+    border: 1px solid #d1d5db; /* gray-300 */
+    transition: all 0.2s ease;
+}
+
+    .search-input:focus {
+        border-color: #008167;
+        box-shadow: 0 0 0 0.2rem rgba(0, 129, 103, 0.25);
+    }
+
+.search-input-sm {
+    font-size: 0.875rem;
+    padding: 0.5rem 0.75rem;
+    border: 1px solid #d1d5db; /* gray-300 */
+}
+
+.search-label {
+    font-size: 0.75rem;
+    font-weight: 500;
+    color: #6b7280; /* gray-500 */
+}
+
+.search-divider {
+    height: 1px;
+    margin: 1.25rem 0;
+    background-color: #e5e7eb; /* gray-200 */
+}
+
+.btn-gradient {
+    background: linear-gradient(135deg, #008167 0%, #00a283 100%);
+    border: none;
+    transition: all 0.3s ease;
+}
+
+    .btn-gradient:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(0, 129, 103, 0.3);
+    }
+
+.btn-icon {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    justify-content: center;
+}
+
+
+/* --- GPU Listing Card --- */
+.gpu-listing-card {
+    background-color: white;
+    border-radius: 1rem; /* 16px */
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+    overflow: hidden;
+    transition: all 0.3s ease;
+    border: 1px solid #e5e7eb;
+    height: 100%;
+}
+
+    .gpu-listing-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.07), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    }
+
+.gpu-card-image {
+    width: 100%;
+    height: 12rem; /* 192px */
+    object-fit: contain; /* Shows the whole image */
+    background-color: #111827; /* gray-900 */
+    padding: 1rem;
+}
+
+.gpu-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 1rem;
+}
+
+.gpu-card-title {
+    font-size: 1.25rem; /* 20px */
+    font-weight: 700;
+    color: #1f2937; /* gray-800 */
+    line-height: 1.4;
+    /* Truncate long titles */
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 2; /* number of lines to show */
+    -webkit-box-orient: vertical;
+}
+
+.gpu-card-price {
+    font-size: 1.875rem; /* 30px */
+    font-weight: 800;
+    color: #111827;
+}
+
+.gpu-card-price-label {
+    font-size: 0.875rem;
+    color: #6b7280;
+    margin-top: -0.25rem;
+}
+
+.gpu-card-specs {
+    padding-top: 1.25rem;
+    border-top: 1px solid #f3f4f6; /* gray-100 */
+    space-y: 0.75rem;
+}
+
+.spec-item {
+    display: flex;
+    align-items: center;
+    color: #374151; /* gray-700 */
+    margin-bottom: 0.75rem;
+}
+
+.spec-icon {
+    height: 1.25rem;
+    width: 1.25rem;
+    margin-right: 0.75rem;
+    color: #9ca3af; /* gray-400 */
+    flex-shrink: 0;
+}
+
+.spec-label {
+    font-size: 0.75rem; /* 12px */
+    color: #6b7280; /* gray-500 */
+    line-height: 1;
+}
+
+.spec-value {
+    font-weight: 600;
+    line-height: 1.2;
+}
+
+/* --- Marketplace Header --- */
+.marketplace-header {
+    padding: 2rem 0 3rem 0;
+}
+
+    .marketplace-header h1 {
+        color: #212529; /* Dark color for the title */
+        font-weight: 700 !important; /* Ensure it's bold */
+    }
+
+    .marketplace-header .lead {
+        max-width: 600px;
+        margin-left: auto;
+        margin-right: auto;
+        font-weight: 400;
+    }
+
+/* === ADMIN DASHBOARD STYLES === */
+
+.admin-dashboard-container {
+    font-family: 'Inter', sans-serif;
+}
+
+.admin-header {
+    font-weight: 700;
+    margin-bottom: 2rem;
+}
+
+/* --- Stat Cards --- */
+.admin-stat-card {
+    color: white;
+    padding: 2rem;
+    border-radius: 0.75rem; /* 12px */
+}
+
+.stat-title {
+    font-size: 0.875rem; /* 14px */
+    font-weight: 500;
+    opacity: 0.8;
+    margin-bottom: 0.5rem;
+}
+
+.stat-number {
+    font-size: 3rem; /* 48px */
+    font-weight: 800;
+    line-height: 1;
+}
+
+/* --- Content Area and Tables --- */
+.admin-content-area {
+    display: grid;
+    gap: 3rem; /* Space between the two tables */
+}
+
+.section-header {
+    font-size: 1.875rem; /* 30px */
+    font-weight: 600;
+    margin-bottom: 1.5rem;
+}
+
+.admin-table-card {
+    background-color: white;
+    border-radius: 0.75rem;
+    border: 1px solid #e5e7eb; /* gray-200 */
+}
+
+.admin-table {
+    margin-bottom: 0; /* Remove default table margin */
+    border-collapse: collapse;
+}
+
+.admin-table thead th {
+    font-size: 1rem;
+    font-weight: 600;
+    color: #4b5563; /* gray-600 */
+    padding: 1.5rem;
+    border-bottom: 1px solid #e5e7eb;
+    border-top: 0;
+}
+
+.admin-table tbody td {
+    padding: 1.5rem;
+    vertical-align: middle;
+    color: #374151; /* gray-700 */
+    border-top: 1px solid #e5e7eb;
+}
+
+.admin-table tbody tr:hover {
+    background-color: #f9fafb; /* gray-50 */
+}
+
+.admin-table tbody tr:first-child td {
+    border-top: 0;
+}
+
+.admin-action-btn {
+    font-weight: 600;
+    font-size: 0.875rem;
+    border-radius: 0.375rem;
+    transition: all 0.2s ease-in-out;
+}
+.admin-action-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+/* === DISPUTE RESOLUTION PAGE STYLES === */
+
+.dispute-container {
+    font-family: 'Inter', sans-serif;
+}
+
+.section-header-sm {
+    font-size: 1.5rem; /* 24px */
+    font-weight: 600;
+    margin-bottom: 1.5rem;
+}
+
+.detail-item {
+    margin-bottom: 1.5rem;
+}
+
+.detail-label {
+    font-size: 0.875rem; /* 14px */
+    color: #6c757d; /* Muted text color */
+    margin-bottom: 0.25rem;
+}
+
+.detail-value {
+    font-weight: 500;
+    font-size: 1rem; /* 16px */
+    color: #343a40; /* Darker text */
+}
+
+.break-word {
+    word-break: break-all;
+}
+
+.action-btn {
+    font-size: 1rem;
+    font-weight: 600;
+    padding: 0.75rem 1.5rem;
+    border-radius: 0.5rem;
+    transition: all 0.3s ease;
+}
+
+    .action-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    }
+
+
+/* === FINAL PRICING CALCULATOR STYLES === */
+
+/* --- Centering Wrapper --- */
+.calculator-page-wrapper {
+    display: flex;
+    justify-content: center; /* Center horizontally */
+    align-items: center; /* Center vertically */
+    width: 100%;
+    min-height: 75vh; /* Use viewport height to push content to the middle */
+    font-family: 'Poppins', sans-serif;
+}
+
+/* --- Main Container (Copied from before) --- */
+.calculator-container-final {
+    display: flex;
+    flex-wrap: wrap;
+    background-color: #34495e;
+    border-radius: 16px;
+    overflow: hidden;
+    width: 100%;
+    max-width: 850px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+}
+
+    /* --- Left Panel (Copied from before) --- */
+    .calculator-container-final .input-panel {
+        flex: 1.5;
+        padding: 40px;
+        min-width: 300px;
+        background-color: #ffffff;
+    }
+
+        .calculator-container-final .input-panel h1 {
+            font-size: 28px;
+            margin-top: 0;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+
+        .calculator-container-final .input-panel .subtitle {
+            font-size: 14px;
+            color: #7f8c8d;
+            margin-bottom: 30px;
+        }
+
+    .calculator-container-final .form-group {
+        margin-bottom: 20px;
+    }
+
+        .calculator-container-final .form-group label {
+            display: block;
+            font-size: 14px;
+            font-weight: 500;
+            margin-bottom: 8px;
+            color: #34495e;
+        }
+
+    /* --- Input Field Styles (Copied from before) --- */
+    .calculator-container-final .form-control {
+        width: 100%;
+        padding: 12px;
+        background-color: #ecf0f1;
+        border: 1px solid #bdc3c7;
+        border-radius: 8px;
+        color: #2c3e50;
+        font-family: 'Poppins', sans-serif;
+        font-size: 14px;
+        box-sizing: border-box;
+        transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    }
+
+        .calculator-container-final .form-control:focus {
+            outline: none;
+            border-color: #2980b9;
+            box-shadow: 0 0 0 3px rgba(41, 128, 185, 0.2);
+        }
+
+    /* --- FIX FOR THE DROPDOWN TEXT --- */
+    /* This targets the placeholder option specifically */
+    .calculator-container-final select.form-control:required:invalid {
+        color: #6c757d; /* A muted grey color for the "Please select" text */
+    }
+
+option[value=""] {
+    color: #6c757d;
+}
+/* ---------------------------------- */
+
+
+/* --- Right Panel (Copied from before) --- */
+.calculator-container-final .cost-panel {
+    flex: 1;
+    background-color: #34495e;
+    padding: 40px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    color: #ecf0f1;
+    min-width: 280px;
+}
+
+    .calculator-container-final .cost-panel h4 {
+        font-size: 16px;
+        font-weight: 500;
+        margin: 0;
+    }
+
+.calculator-container-final .price-display {
+    font-size: 52px;
+    font-weight: 700;
+    color: #ffffff;
+    margin: 10px 0;
+}
+
+.calculator-container-final .price-description {
+    font-size: 14px;
+    color: #bdc3c7;
+    margin-bottom: 25px;
+}
+
+/* --- Buttons (Copied from before) --- */
+.calculator-container-final .btn {
+    display: inline-block;
+    padding: 12px 24px;
+    border: none;
+    border-radius: 8px;
+    font-family: 'Poppins', sans-serif;
     font-size: 16px;
-  }
+    font-weight: 600;
+    cursor: pointer;
+    text-align: center;
+    transition: all 0.3s ease;
+    width: 100%;
 }
 
-.border-top {
-  border-top: 1px solid #e5e5e5;
-}
-.border-bottom {
-  border-bottom: 1px solid #e5e5e5;
-}
-
-.box-shadow {
-  box-shadow: 0 .25rem .75rem rgba(0, 0, 0, .05);
+.calculator-container-final .btn-primary-calc {
+    background-color: #e67e22;
+    color: #ffffff;
+    margin-top: 10px;
 }
 
-button.accept-policy {
-  font-size: 1rem;
-  line-height: inherit;
+    .calculator-container-final .btn-primary-calc:hover {
+        background-color: #f39c12;
+    }
+
+.calculator-container-final .btn-secondary-calc {
+    background-color: #2980b9;
+    color: #ffffff;
 }
 
-/* Sticky footer styles
--------------------------------------------------- */
-html {
-  position: relative;
-  min-height: 100%;
+    .calculator-container-final .btn-secondary-calc:hover {
+        background-color: #3498db;
+    }
+
+/* --- Responsive (Copied from before) --- */
+@media (max-width: 768px) {
+    .calculator-container-final {
+        flex-direction: column;
+    }
+
+    .calculator-page-wrapper {
+        min-height: auto; /* Allow scrolling on small screens */
+        padding: 1rem;
+    }
+}
+/* === FINAL GPU DETAILS PAGE STYLES === */
+
+.details-container {
+    font-family: 'Inter', sans-serif;
 }
 
-body {
-  /* Margin bottom by footer height */
-  margin-bottom: 60px;
+.details-main-card {
+    border-radius: 0.75rem;
+    border: 1px solid #e5e7eb;
+    background-color: white;
 }
-.footer {
-  position: absolute;
-  bottom: 0;
-  width: 100%;
-  white-space: nowrap;
-  line-height: 60px; /* Vertically center the text there */
+
+.details-title {
+    font-size: 2.25rem;
+    font-weight: 700;
+}
+
+.details-subtitle {
+    font-size: 1.125rem;
+    color: #6b7280;
+}
+
+.icon-sm {
+    width: 1rem;
+    height: 1rem;
+    vertical-align: text-bottom;
+    margin-right: 0.25rem;
+}
+
+/* --- Image Styles (from previous step) --- */
+.details-image-box {
+    background-color: #f9fafb;
+    border-radius: 0.5rem;
+    padding: 1rem;
+    height: 18rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+}
+
+.details-main-image {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+}
+
+/* --- CORRECTED Pricing Card and Button Styles --- */
+.details-pricing-card {
+    text-align: center;
+    background-color: #f8f9fa; /* Clean, light grey background */
+    border-radius: 0.5rem;
+    padding: 1.5rem;
+    border: 1px solid #e9ecef; /* Light border */
+}
+
+.details-price {
+    font-size: 2.25rem;
+    font-weight: 700;
+    color: #008167; /* Use your primary green color */
+    margin-bottom: 0.5rem;
+}
+
+.details-rent-btn {
+    font-weight: 600;
+    font-size: 1.1rem;
+    padding: 0.75rem 1.5rem;
+    border-radius: 0.5rem;
+    background-color: #008167; /* Use your primary green color */
+    border-color: #008167;
+    color: white;
+    transition: all 0.3s ease;
+}
+
+    .details-rent-btn:hover {
+        background-color: #006b55; /* A darker shade of your green */
+        border-color: #006b55;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(0, 129, 103, 0.3);
+    }
+/* ----------------------------------------------- */
+
+.specs-header {
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+}
+
+.specs-list li {
+    display: flex;
+    justify-content: space-between;
+    padding: 0.75rem 0;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+    .specs-list li:last-child {
+        border-bottom: none;
+    }
+
+.specs-list span {
+    color: #6b7280;
+}
+
+/* --- Reviews Section Styles (from previous step) --- */
+.review-card {
+    border: 1px solid #e5e7eb;
+    border-radius: 0.5rem;
+    padding: 1rem;
+    margin-bottom: 1rem;
+}
+
+.review-stars {
+    color: #f59e0b;
+}
+
+.review-comment {
+    color: #4b5563;
+    line-height: 1.6;
+}
+
+/* === CREATE/EDIT LISTING PAGE STYLES === */
+
+.suggest-btn {
+    border-color: #ced4da;
+    background-color: #e9ecef;
+    font-weight: 500;
+    transition: all 0.2s ease-in-out;
+}
+
+    .suggest-btn:hover {
+        background-color: #dde1e3;
+        border-color: #adb5bd;
+    }
+
+/* Override default bootstrap custom-file-input style to match the other inputs */
+.custom-file-label {
+    background-color: #ecf0f1;
+    border: 1px solid #bdc3c7;
+}
+
+.custom-file-input:focus ~ .custom-file-label {
+    border-color: #008167;
+    box-shadow: 0 0 0 0.2rem rgba(0, 129, 103, 0.25);
+}
+
+/* === EDIT LISTING PAGE STYLES === */
+
+.edit-image-container {
+    width: 100%;
+    height: 100%;
+    min-height: 200px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #f8f9fa; /* Light grey background */
+    border-radius: 0.5rem;
+    border: 1px solid #dee2e6;
+    padding: 1rem;
+}
+
+.no-image-placeholder {
+    text-align: center;
+    color: #6c757d; /* Muted text */
+}
+
+/* === DELETE CONFIRMATION PAGE STYLES === */
+
+.delete-summary-box {
+    background-color: #f8f9fa; /* Light grey */
+    border: 1px solid #e9ecef; /* Lighter grey border */
+    border-radius: 0.5rem;
+    padding: 1.5rem;
+    text-align: center;
+}
+
+/* === PROVIDER DASHBOARD STYLES === */
+
+.provider-dashboard-container {
+    font-family: 'Inter', sans-serif;
+}
+
+/* --- Stat Cards --- */
+.provider-stat-card {
+    color: white;
+    padding: 1.5rem;
+    border-radius: 0.75rem;
+}
+
+    .provider-stat-card .stat-title {
+        font-size: 0.875rem;
+        font-weight: 500;
+        opacity: 0.8;
+        margin-bottom: 0.25rem;
+    }
+
+    .provider-stat-card .stat-number {
+        font-size: 2.5rem;
+        font-weight: 700;
+        line-height: 1;
+    }
+
+/* --- Chart Sizing Fix --- */
+.chart-container {
+    position: relative;
+    height: 250px; /* You can adjust this height */
+    width: 100%;
+    max-width: 250px; /* Keep the chart a reasonable size */
+    margin-left: auto;
+    margin-right: auto;
+    margin-bottom: 1.5rem;
+}
+/* === ACTIVE JOB STATUS PAGE STYLES === */
+
+.job-status-container {
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto; /* Center the container */
+    font-family: 'Inter', sans-serif;
+}
+
+.job-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+    flex-wrap: wrap; /* Allows wrapping on small screens */
+}
+
+    .job-header h1 {
+        font-size: 28px;
+        font-weight: 600;
+    }
+
+.stop-job-btn {
+    background-color: #dc2626; /* red */
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    padding: 12px 20px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s ease, transform 0.2s ease;
+}
+
+    .stop-job-btn:hover {
+        background-color: #b91c1c;
+        transform: translateY(-2px);
+    }
+
+.content-grid {
+    display: grid;
+    grid-template-columns: 1fr 1.5fr;
+    gap: 25px;
+}
+
+.card.job-details, .card.console {
+    background-color: #ffffff;
+    border-radius: 12px;
+    padding: 25px;
+    box-shadow: 0 4px 6px -1px rgba(0,0,0,0.07), 0 2px 4px -2px rgba(0,0,0,0.07);
+    border: 1px solid #e2e8f0;
+}
+
+    .card.job-details h2, .card.console h2 {
+        font-size: 20px;
+        font-weight: 600;
+        margin-bottom: 20px;
+        padding-bottom: 10px;
+        border-bottom: 1px solid #e2e8f0;
+    }
+
+.job-details .detail-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 15px;
+    margin-bottom: 18px;
+}
+
+    .job-details .detail-item:last-child {
+        margin-bottom: 0;
+    }
+
+.job-details .detail-label {
+    color: #64748b;
+    font-weight: 500;
+}
+
+.job-details .detail-value {
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.job-id {
+    font-family: 'Fira Code', monospace;
+    font-size: 14px;
+    background-color: #f1f5f9;
+    padding: 4px 8px;
+    border-radius: 4px;
+}
+
+.status-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 600;
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 14px;
+    background-color: rgba(22, 163, 74, 0.1);
+    color: #16a34a;
+}
+
+    .status-badge::before {
+        content: '';
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background-color: #16a34a;
+        animation: pulse 2s infinite;
+    }
+
+.console-output {
+    background-color: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    padding: 15px;
+    height: 250px;
+    overflow-y: auto;
+    font-family: 'Fira Code', monospace;
+    font-size: 14px;
+}
+
+    .console-output pre {
+        white-space: pre-wrap;
+        word-wrap: break-word;
+        color: #059669;
+        margin-bottom: 0.5rem;
+    }
+
+        .console-output pre .prompt {
+            color: #4f46e5;
+        }
+
+/* --- Responsive Design --- */
+@media (max-width: 900px) {
+    .content-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 600px) {
+    .job-header {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 15px;
+    }
+
+    .stop-job-btn {
+        width: 100%;
+    }
+}
+
+/* Re-using pulse animation from previous styles */
+@keyframes pulse {
+    0% {
+        box-shadow: 0 0 0 0 rgba(22, 163, 74, 0.7);
+    }
+
+    70% {
+        box-shadow: 0 0 0 10px rgba(22, 163, 74, 0);
+    }
+
+    100% {
+        box-shadow: 0 0 0 0 rgba(22, 163, 74, 0);
+    }
+}
+/* --- Chart Styles --- */
+.chart-legend {
+    margin-top: 1.5rem;
+    display: grid;
+    gap: 0.5rem;
+}
+
+/* === MANAGE ACCOUNT PAGE STYLES === */
+
+.form-section-header {
+    font-weight: 600;
+    color: #495057;
+    margin-bottom: 1rem;
+}
+
+/* === RENTER DASHBOARD TABLE & BADGE STYLES === */
+
+.admin-table-sm thead th {
+    padding: 0.75rem;
+    font-size: 0.8rem;
+}
+
+.admin-table-sm tbody td {
+    padding: 0.75rem;
+    font-size: 0.9rem;
+}
+
+.status-badge-sm {
+    display: inline-flex;
+    align-items: center;
+    border-radius: 9999px; /* rounded-full */
+    padding: 0.25rem 0.75rem;
+    font-size: 0.75rem; /* text-xs */
+    font-weight: 500;
+}
+
+/* Colors for badges */
+.bg-success-light {
+    background-color: #d1fae5;
+}
+
+.text-success-dark {
+    color: #065f46;
+}
+
+.bg-danger-light {
+    background-color: #fee2e2;
+}
+
+.text-danger-dark {
+    color: #991b1b;
+}
+
+.bg-warning-light {
+    background-color: #fef3c7;
+}
+
+.text-warning-dark {
+    color: #92400e;
+}
+
+.bg-secondary-light {
+    background-color: #e5e7eb;
+}
+
+.text-secondary-dark {
+    color: #4b5563;
+}
+
+/* === WALLET DASHBOARD STYLES === */
+
+.wallet-container {
+    font-family: 'Inter', sans-serif;
+}
+
+.wallet-card {
+    border: 1px solid #e9ecef;
+    border-radius: 0.75rem;
+}
+
+/* Make the placeholder text in the Add Funds input a bit lighter */
+.wallet-container input::placeholder {
+    color: #adb5bd;
+    opacity: 1;
 }

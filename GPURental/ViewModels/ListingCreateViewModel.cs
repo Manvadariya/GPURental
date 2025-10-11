@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using GPURental.Models;
 using Microsoft.AspNetCore.Http;
@@ -15,12 +16,15 @@ namespace GPURental.ViewModels
         public string GpuModel { get; set; }
 
         [Display(Name = "VRAM (GB)")]
+        [Range(0, int.MaxValue)]
         public int VramInGB { get; set; }
 
         [Display(Name = "System RAM (GB)")]
+        [Range(0, int.MaxValue)]
         public int RamInGB { get; set; }
 
         [Display(Name = "Disk Space (GB)")]
+        [Range(0, int.MaxValue)]
         public int DiskInGB { get; set; }
 
         [Display(Name = "CPU Model")]
@@ -33,8 +37,9 @@ namespace GPURental.ViewModels
         public string Location { get; set; }
 
         [Required]
-        [Display(Name = "Price Per Hour (in Cents)")]
-        public int PricePerHourInCents { get; set; }
+        [Display(Name = "Price Per Hour (in RS.)")]
+        [Range(0, double.MaxValue)]
+        public decimal PricePerHourInINR { get; set; }
 
         [Display(Name = "Listing Image")]
         public IFormFile Image { get; set; }

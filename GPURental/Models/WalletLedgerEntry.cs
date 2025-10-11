@@ -30,7 +30,7 @@ namespace GPURental.Models
         public RentalJob RentalJob { get; set; }
 
         public LedgerEntryType Type { get; set; }
-        public int AmountInCents { get; set; }
+        public decimal AmountInINR { get; set; }
         public LedgerEntryStatus Status { get; set; }
         public DateTime CreatedAt { get; set; }
     }

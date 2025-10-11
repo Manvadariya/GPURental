@@ -34,7 +34,7 @@ namespace GPURental.Models
         public string CpuModel { get; set; }
         public string OperatingSystem { get; set; }
         public string Location { get; set; }
-        public int PricePerHourInCents { get; set; }
+        public decimal PricePerHourInINR { get; set; }
         public GpuStatus Status { get; set; }
         public DateTime CreatedAt { get; set; }
         public string ImagePath { get; set; }

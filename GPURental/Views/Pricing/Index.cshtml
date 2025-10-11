@@ -3,51 +3,51 @@
     ViewData["Title"] = "Pricing Calculator";
 }
 
-<h1>@ViewData["Title"]</h1>
-<p class="text-muted">Estimate the cost of your next GPU rental.</p>
-<hr />
+<div class="calculator-page-wrapper">
+    <div class="calculator-container-final">
+        <!-- Left Panel: Inputs -->
+        <div class="input-panel">
+            <h1>Pricing Calculator</h1>
+            <p class="subtitle">Estimate your rental cost</p>
 
-<div class="row">
-    <div class="col-md-6">
-        <div class="card">
-            <div class="card-body">
-                <form asp-action="Index" method="post">
-                    <div class="form-group">
-                        <label asp-for="SelectedGpuModel"></label>
-                        <select asp-for="SelectedGpuModel" asp-items="Model.GpuTypes" class="form-control">
-                            <option value="">-- Please select a GPU --</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label asp-for="Minutes"></label>
-                        <input asp-for="Minutes" type="number" class="form-control" step="any" />
-                        <span asp-validation-for="Minutes" class="text-danger"></span>
-                    </div>
-                    <button type="submit" class="btn btn-primary">Calculate Cost</button>
-                </form>
-            </div>
+            <form asp-action="Index" method="post">
+                <div class="form-group">
+                    <label asp-for="SelectedGpuModel"></label>
+                    <select asp-for="SelectedGpuModel" asp-items="Model.GpuTypes" class="form-control custom-select-style" required>
+                        <option value="">Please select a GPU</option>
+                    </select>
+                    <span asp-validation-for="SelectedGpuModel" class="text-danger small"></span>
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="Seconds"></label>
+                    <input asp-for="Seconds" type="number" class="form-control" min="1" step="any" />
+                    <span asp-validation-for="Seconds" class="text-danger small"></span>
+                </div>
+
+                <button type="submit" class="btn btn-primary-calc">Calculate Cost</button>
+            </form>
         </div>
-    </div>
-    <div class="col-md-6">
-        @if (Model.CalculationSuccess)
-        {
-            <div class="card text-center">
-                <div class="card-header">
-                    Estimated Cost
+
+        <!-- Right Panel: Cost Display -->
+        <div class="cost-panel">
+            @if (Model.CalculationSuccess)
+            {
+                <h4>Estimated Cost</h4>
+                <div class="price-display">
+                    $@Model.EstimatedCost.ToString("F2")
                 </div>
-                <div class="card-body">
-                    <h2 class="display-4 text-success">
-                        $@Model.EstimatedCost.ToString("F2")
-                    </h2>
-                    <p class="text-muted">
-                        For a <strong>@Model.SelectedGpuModel</strong> rented for <strong>@Model.Minutes minute(s)</strong>.
-                    </p>
-                    <a asp-controller="Marketplace" asp-action="Index" class="btn btn-info">Browse Available Listings</a>
-                </div>
-                <div class="card-footer text-muted">
-                    This is an estimate based on the average price. Actual prices may vary.
-                </div>
-            </div>
-        }
+                <p class="price-description">
+                    For a <strong>@Model.SelectedGpuModel</strong> rented for <strong>@Model.Seconds Seconds(s)</strong>.
+                </p>
+                <a asp-controller="Marketplace" asp-action="Index" class="btn btn-secondary-calc">Browse Marketplace</a>
+            }
+            else
+            {
+                <h4>Live Cost</h4>
+                <div class="price-display">$0.00</div>
+                <p class="price-description">Fill out the form to see your estimated cost.</p>
+            }
+        </div>
     </div>
 </div>
