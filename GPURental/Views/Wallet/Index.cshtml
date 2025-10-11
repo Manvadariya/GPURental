@@ -8,15 +8,6 @@
         <h1 class="admin-header mb-0">@ViewData["Title"]</h1>
     </div>
 
-    @if (TempData["SuccessMessage"] != null)
-    {
-        <div class="alert alert-success">@TempData["SuccessMessage"]</div>
-    }
-    @if (TempData["ErrorMessage"] != null)
-    {
-        <div class="alert alert-danger">@TempData["ErrorMessage"]</div>
-    }
-
     <div class="row">
         <!-- Balance & Add Funds Column -->
         <div class="col-lg-4 mb-4">

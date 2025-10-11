@@ -4,8 +4,16 @@
 }
 
 <div class="provider-dashboard-container">
-    <h1 class="admin-header">@ViewData["Title"]</h1>
-
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="admin-header mb-0">@ViewData["Title"]</h1>
+        <div>
+            <a asp-controller="Marketplace" asp-action="Index" class="btn btn-secondary">Browse GPUs</a>
+            <a asp-controller="Wallet" asp-action="Index" class="btn btn-primary btn-gradient btn-icon ml-2">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mr-2"><path d="M21 12V7H5a2 2 0 0 1-2-2V3h14a2 2 0 0 1 2 2v7z"></path><path d="M1 12v7a2 2 0 0 0 2 2h18v-8a2 2 0 0 0-2-2H3z"></path><path d="M19 16h.01"></path></svg>
+                <span>View Wallet</span>
+            </a>
+        </div>
+    </div>
     <!-- Stat Cards -->
     <div class="row">
         <div class="col-lg-3 col-md-6 mb-4">
@@ -242,7 +250,7 @@
                     data: { labels: spendingData.map(d => d.label), datasets: [{ data: spendingData.map(d => d.value), backgroundColor: chartColors, borderColor: '#ffffff', borderWidth: 4 }] },
                     options: { responsive: true, cutout: '70%', plugins: { legend: { display: false }, tooltip: { callbacks: { label: (c) => ` ₹${c.raw.toFixed(2)}` } } } }
                 });
-                buildLegend(spendingData, 'spendingChartLegend', '$', 2, '');
+                buildLegend(spendingData, 'spendingChartLegend', '₹', 2, '');
             } else {
                  document.getElementById('spendingChart').parentElement.innerHTML = '<div class="text-center p-5 text-muted">No spending data yet.</div>';
             }

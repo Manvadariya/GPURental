@@ -12,9 +12,17 @@
     </div>
     <!-- ========================== -->
 
+    
     <div class="max-w-5xl mx-auto">
         <!-- Unified Search Card -->
         <div class="marketplace-search-card">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h5 class="mb-0">Search & Calculate</h5>
+                <a asp-controller="Pricing" asp-action="Index" class="btn btn-info btn-sm">
+                    <i data-lucide="calculator" class="icon-sm mr-1"></i>
+                    <span>Calculate Pricing</span>
+                </a>
+            </div>
             <!-- AI Search Form -->
             <form asp-action="AiSearch" asp-controller="Marketplace" method="get">
                 <div class="input-group">
