@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace GPURental.Models
 {
-    // Inherit from IdentityUser
+    /// User model extending IdentityUser for authentication. Represents both GPU providers and renters.
     public class User : IdentityUser
     {
         // IdentityUser provides: Id (string), UserName, Email, PasswordHash

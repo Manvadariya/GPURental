@@ -5,6 +5,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace GPURental.Models
 {
+    /// Rental job model tracking GPU rental sessions between renters and providers.
     public enum JobStatus
     {
         Running,

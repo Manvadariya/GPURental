@@ -3,10 +3,11 @@ using System.ComponentModel.DataAnnotations;
 
 namespace GPURental.Models
 {
+    /// Wallet ledger entry model for tracking all financial transactions within the platform.
     public enum LedgerEntryType
     {
         TopUp,
-        Charge, 
+        Charge,
         Refund,
         Payout
     }

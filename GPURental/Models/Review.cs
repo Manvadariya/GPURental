@@ -3,6 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace GPURental.Models
 {
+    /// Review model for user feedback on completed GPU rental experiences.
     public class Review
     {
         [Key]
