@@ -4,6 +4,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace GPURental.Models
 {
+    /// GPU listing model representing hardware available for rental in the marketplace.
     public enum GpuStatus
     {
         Published,

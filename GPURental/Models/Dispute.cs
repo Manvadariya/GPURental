@@ -3,6 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace GPURental.Models
 {
+    /// Dispute model for handling conflicts between renters and providers regarding rental jobs.
     public enum DisputeStatus
     {
         Submitted,
